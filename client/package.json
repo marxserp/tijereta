@@ -14,11 +14,6 @@
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.5",
     "@mui/x-data-grid": "^5.17.2",
-    "@nivo/bar": "^0.80.0",
-    "@nivo/core": "^0.79.0",
-    "@nivo/geo": "^0.80.0",
-    "@nivo/line": "^0.79.1",
-    "@nivo/pie": "^0.80.0",
     "@reduxjs/toolkit": "^1.8.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
@@ -36,10 +31,11 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
-    "build": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev" : "next dev -p 3000"
   },
   "eslintConfig": {
     "extends": [

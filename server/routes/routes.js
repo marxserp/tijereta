@@ -1,43 +1,24 @@
 import express from "express";
 import {
-  getSolicitud,
-  getSolicitudes,
-  createSolicitud,
-  updateSolicitud,
-} from "../controllers/solicitudes";
-import {
   getCliente,
   getClientes,
   createCliente,
   updateCliente,
-} from "../controllers/clientes";
+} from "../controllers/cliente.controller";
 import {
   getProcedimiento,
   getProcedimientos,
   createProcedimiento,
   updateProcedimiento,
-} from "./../controllers/procedimientos";
-import {
-  getSolicitud,
-  getSolicitudes,
-  createSolicitud,
-  updateSolicitud,
-} from "../controllers/solicitudes";
+} from "./../controllers/procedimiento.controller";
 import {
   getTurno,
   getTurnos,
   createTurno,
   updateTurno,
-} from "./../controllers/turnos";
+} from "./../controllers/turno.controller";
 
 const router = express.Router();
-
-/*---SOLICITUDES---*/
-router.get("/", getSolicitudes);
-//router.get("/:id", getSolicitud);
-router.post("/", createSolicitud);
-router.patch("/:id", updateSolicitud);
-// router.delete("/:id", deleteSolicitud);
 
 /*---CLIENTES---*/
 router.get("/", getClientes);
@@ -55,7 +36,7 @@ router.patch("/:id", updateProcedimiento);
 
 /*---TURNOS---*/
 router.get("/", getTurnos);
-//router.get("/:id", getTurno);
+router.get("/:id", getTurno);
 router.post("/", createTurno);
 router.patch("/:id", updateTurno);
 // router.delete("/:id", deleteTurno);

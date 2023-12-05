@@ -1,18 +1,25 @@
+import express from "express";
 import mongoose from "mongoose";
 import turnoModel from "../models/turnoModel";
 
 export const createTurno = async (req, res) => {
-  const { id_cliente, id_procedimiento, id_procedimientoAdicional, fecha } =
-    req.body;
+  const {
+    id_cliente,
+    id_procedimiento,
+    id_procedimientoAdicional,
+    fecha,
+    detalle,
+  } = req.body;
   const newCliente = new {
     id_cliente,
     id_procedimiento,
     id_procedimientoAdicional,
     fecha,
+    detalle,
   }();
 };
 
-export const getTurnos = async (req, res) => {
+export const getAllTurnos = async (req, res) => {
   try {
     const turnos = await turnoModel.find();
     res.status(200).json(turnos);
@@ -21,7 +28,7 @@ export const getTurnos = async (req, res) => {
   }
 };
 
-export const getTurno = async (req, res) => {
+export const getSingleTurno = async (req, res) => {
   const { id } = req.params;
   try {
     const turno = await turnoModel.findById(id);
@@ -33,8 +40,14 @@ export const getTurno = async (req, res) => {
 
 export const updateTurno = async (req, res) => {
   const { id } = req.params;
-  const { id_cliente, id_procedimiento, id_procedimientoAdicional, fecha } =
-    req.body;
+  const {
+    id_cliente,
+    id_procedimiento,
+    id_procedimientoAdicional,
+    fecha,
+    detalle,
+    estado,
+  } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No se encontró turno con ID ${id}.`);
@@ -44,12 +57,20 @@ export const updateTurno = async (req, res) => {
     id_procedimiento,
     id_procedimientoAdicional,
     fecha,
+    detalle,
+    estado,
   };
   await turnoModel.findByIdAndUpdate(id, updatedTurno, { new: true });
 
   res.json(updatedTurno);
 };
 
-// Remover turno (soft delete)
+export const deleteTurno = async (req, res) => {
+  const { id } = req.params;
 
-// Eliminar turno (hard delete)
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No existe ningún turno de ID ${id}`);
+
+  await turnoModel.findByIdAndRemove(id);
+  res.json({ message: "Turno eliminado." });
+};

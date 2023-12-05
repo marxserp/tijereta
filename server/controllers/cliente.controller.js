@@ -2,13 +2,19 @@ import mongoose from "mongoose";
 import clienteModel from "../models/clienteModel";
 
 export const createCliente = async (req, res) => {
-  const { nombre, apellido, contacto, correo } = req.body;
-  const newCliente = new clienteModel({ nombre, apellido, contacto, correo });
   try {
-    await newCliente.save();
+    const { nombre, apellido, contacto, correo } = req.body;
+    const clienteExists = await clienteModel.findOne({ correo });
+    if (clienteExists) return res.status(200).json(clienteExists);
+    const newCliente = await clienteModel.create({
+      nombre,
+      apellido,
+      contacto,
+      correo,
+    });
     res.status(201).json(newCliente);
   } catch (error) {
-    res.status(409).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

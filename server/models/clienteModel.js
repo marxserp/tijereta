@@ -12,12 +12,11 @@ const clienteSchema = mongoose.Schema(
       unique: true,
       match: [/\S+@\S+\.\S+/, "Correo no valido"],
       index: true,
+      required: true,
     },
     estado: { type: Boolean, default: 1 },
   },
   { timestamps: true }
 );
 
-const clienteModel = mongoose.model("Cliente", clienteSchema);
-
-export default clienteModel;
+export const clienteModel = mongoose.model("Cliente", { name: string });

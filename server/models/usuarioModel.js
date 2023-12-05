@@ -23,8 +23,8 @@ const usuarioSchema = mongoose.Schema(
       match: [/\S+@\S+\.\S+/, "Correo no valido"],
       index: true,
     },
-    contrasena: String,
-    sal: String,
+    contrasena: { type: String, required: true },
+    sal: { type: String, required: true },
   },
   { timestamps: true }
 );
@@ -33,6 +33,4 @@ usuarioSchema.plugin(uniqueValidator, {
   message: "Este nombre ya se encuentra reservado",
 });
 
-const usuarioModel = mongoose.model("Usuario", usuarioSchema);
-
-export default usuarioModel;
+export const usuarioModel = mongoose.model("Usuario", usuarioSchema);
