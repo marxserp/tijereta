@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import turnoModel from "../models/turnoModel";
+import turnoModel from "../models/turno.model.js";
 
 export const createTurno = async (req, res) => {
   const {

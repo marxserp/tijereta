@@ -1,24 +1,28 @@
 import mongoose from "mongoose";
-import clienteModel from "../models/clienteModel";
+import clienteModel from "../models/cliente.model.js";
+// import usuarioModel from "../models/usuario.model.js";
 
 export const createCliente = async (req, res) => {
   try {
-    const { nombre, apellido, contacto, correo } = req.body;
-    const clienteExists = await clienteModel.findOne({ correo });
-    if (clienteExists) return res.status(200).json(clienteExists);
-    const newCliente = await clienteModel.create({
+    const { nombre, apellido, correo, contacto, usuario } = req.body;
+    const newCliente = new clienteModel({
       nombre,
       apellido,
-      contacto,
       correo,
+      contacto,
+      usuario,
     });
+    // TODO: Two factor verification (same user should not create same client twice)
+    await newCliente.save();
     res.status(201).json(newCliente);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: `Error de controlador al registrar un cliente: ${error.message}`,
+    });
   }
 };
 
-export const getClientes = async (req, res) => {
+export const getAllClientes = async (req, res) => {
   try {
     const clientes = await clienteModel.find();
     res.status(200).json(clientes);
@@ -27,7 +31,7 @@ export const getClientes = async (req, res) => {
   }
 };
 
-export const getCliente = async (req, res) => {
+export const getSingleCliente = async (req, res) => {
   const { id } = req.params;
   try {
     const cliente = await clienteModel.findById(id);

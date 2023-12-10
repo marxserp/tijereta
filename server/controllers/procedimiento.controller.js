@@ -1,5 +1,5 @@
-import mongoose from "mongoose1";
-import procedimientoModel from "../models/procedimientoModel";
+import mongoose from "mongoose";
+import procedimientoModel from "../models/procedimiento.model.js";
 
 export const createProcedimiento = async (req, res) => {
   const { nombre, descripcion, duracion, precio } = req.body;
@@ -17,7 +17,7 @@ export const createProcedimiento = async (req, res) => {
   }
 };
 
-export const getProcedimientos = async (req, res) => {
+export const getAllProcedimientos = async (req, res) => {
   try {
     const procedimientos = await procedimientoModel.find();
     res.status(200).json(procedimientos);
@@ -26,7 +26,7 @@ export const getProcedimientos = async (req, res) => {
   }
 };
 
-export const getProcedimiento = async (req, res) => {
+export const getSingleProcedimiento = async (req, res) => {
   const { id } = req.params;
   try {
     const procedimiento = await procedimientoModel.findById(id);
@@ -54,3 +54,11 @@ export const updateProcedimiento = async (req, res) => {
 // Remover procedimiento (soft delete)
 
 // Eliminar procedimiento (hard delete)
+
+export const deleteProcedimiento = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No existe ningún procedimiento de ID ${id}`);
+  await procedimientoModel.findByIdAndUpdate(id);
+  res.json({ message: "Procedimiento eliminado" });
+};

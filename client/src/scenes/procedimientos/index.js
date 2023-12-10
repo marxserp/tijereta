@@ -1,65 +1,76 @@
 import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataContacts } from "../../data/mockData";
 import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 
-const Contacts = () => {
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setProcedimientos } from "../../state";
+
+const Procedimientos = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const dispatch = useDispatch();
+  const procedimientos = useSelector((state) => state.procedimientos);
+  const token = useSelector((state) => state.token);
+
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "registrarId", headerName: "Registrar ID" },
     {
-      field: "name",
+      field: "nombre",
       headerName: "Nombre",
+      flex: 1.2,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "tipo",
+      headerName: "Tipo",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "age",
-      headerName: "Edad",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
+      field: "duracion",
+      headerName: "Duración",
+      flex: 0.8,
     },
     {
-      field: "phone",
-      headerName: "Teléfono",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Correo",
-      flex: 1,
-    },
-    {
-      field: "address",
-      headerName: "Dirección",
-      flex: 1,
-    },
-    {
-      field: "city",
-      headerName: "Ciudad",
-      flex: 1,
-    },
-    {
-      field: "zipCode",
-      headerName: "Postal",
-      flex: 1,
+      field: "precio",
+      headerName: "Precio",
+      flex: 0.8,
     },
   ];
 
+  const getProcedimientos = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/procedimientos", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        dispatch(setProcedimientos({ procedimientos: data }));
+      } else {
+        console.error(
+          "Error durante la carga de procedimientos: ",
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.log("Error al cargar procedimientos: ", error);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(setProcedimientos({ procedimientos: [] }));
+    getProcedimientos();
+  }, []);
+
   return (
     <Box m="20px">
-      <Header
-        title="Clientes"
-        subtitle="Lista de clientes y sus datos de contacto"
-      />
+      <Header title="Procedimientos" subtitle="Servicios ofrecidos" />
       <Box
-        m="40px 0 0 0"
+        m="0"
         height="75vh"
         sx={{
           "& .MuiDataGrid-root": {
@@ -91,13 +102,13 @@ const Contacts = () => {
         }}
       >
         <DataGrid
-          rows={mockDataContacts}
+          rows={procedimientos}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
+          getRowId={(row) => row._id}
         />
       </Box>
     </Box>
   );
 };
-
-export default Contacts;
+export default Procedimientos;
