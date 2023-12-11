@@ -37,28 +37,27 @@ const Calendar = () => {
   };
 
   const handleEventClick = (selected) => {
-    if (
-      window.confirm(
-        `¿Eliminar evento? '${selected.event.title}'`
-      )
-    ) {
+    if (window.confirm(`¿Eliminar evento? '${selected.event.title}'`)) {
       selected.event.remove();
     }
   };
 
   return (
     <Box m="20px">
-      <Header title="Calendario" subtitle="Cronograma con todos los eventos y sus estados" />
+      <Header
+        title="Calendario"
+        subtitle="Cronograma con todos los eventos y sus estados"
+      />
 
       <Box display="flex" justifyContent="space-between">
         {/* Barra lateral */}
         <Box
-          flex="1 1 20%"
+          flex="1 1 32%"
           backgroundColor={colors.primary[400]}
           p="15px"
           borderRadius="4px"
         >
-          <Typography variant="h5">Events</Typography>
+          <Typography variant="h5">Próximos</Typography>
           <List>
             {currentEvents.map((event) => (
               <ListItem
@@ -66,7 +65,7 @@ const Calendar = () => {
                 sx={{
                   backgroundColor: colors.greenAccent[500],
                   margin: "10px 0",
-                  borderRadius: "2px",
+                  borderRadius: "6px",
                 }}
               >
                 <ListItemText
@@ -89,7 +88,7 @@ const Calendar = () => {
         {/* CALENDAR */}
         <Box flex="1 1 100%" ml="15px">
           <FullCalendar
-            height="75vh"
+            height="70vh"
             plugins={[
               dayGridPlugin,
               timeGridPlugin,

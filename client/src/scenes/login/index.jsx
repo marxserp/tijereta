@@ -18,7 +18,7 @@ const LoginPage = () => {
       </Box>
 
       <Box
-        width="50%"
+        width="30%"
         p="1.5rem"
         m="2rem auto"
         borderRadius="1.5rem"

@@ -2,62 +2,58 @@ import { Box, Button, TextField } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Header from "../../components/Header";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
-const checkoutSchema = yup.object().shape({
-  nombre: yup.string(),
-  apellido: yup.string(),
-  correo: yup.string().email("invalid email"),
-  contacto: yup
-    .string(),
+const valueValidation = yup.object().shape({
+  nombre: yup.string().required("Obligatorio"),
+  tipo: yup.string().required("Obligatorio"),
+  duracion: yup.number().required("Obligatorio"),
 });
+
 const initialValues = {
   nombre: "",
-  apellido: "",
-  correo: "",
-  contacto: "",
+  tipo: "",
+  duracion: "",
 };
 
-const Form = () => {
+const AdminProcedimientos = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  
+
   const { _id } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
+  // const token = useSelector((state) => state.token);
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     try {
       const formData = new URLSearchParams(values);
       formData.append("usuario", _id);
-      const savedClienteResponse = await fetch(
-        "http://localhost:8080/clientes",
+      const savedProcedimientoResponse = await fetch(
+        "http://localhost:8080/procedimientos",
         {
           method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: formData,
         }
       );
-      if (savedClienteResponse.ok) {
+      if (savedProcedimientoResponse.ok) {
         onSubmitProps.resetForm();
       } else {
-        console.log("Error creando cliente: ", savedClienteResponse.statusText);
+        console.log(
+          "Error creando procedimiento: ",
+          savedProcedimientoResponse.statusText
+        );
       }
     } catch (error) {
-      console.log("Error al crear un cliente: ",error);
+      console.log("Error al crear un procedimiento: ", error);
     }
   };
 
   return (
-    <Box m="20px">
-      <Header
-        title="Nuevo cliente"
-        subtitle="Cree un nuevo cliente para guardarlo en la base de datos"
-      />
-
+    <div>
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
-        validationSchema={checkoutSchema}
+        validationSchema={valueValidation}
       >
         {({
           values,
@@ -66,6 +62,7 @@ const Form = () => {
           handleBlur,
           handleChange,
           handleSubmit,
+          resetForm,
         }) => (
           <form onSubmit={handleSubmit}>
             <Box
@@ -87,58 +84,48 @@ const Form = () => {
                 name="nombre"
                 error={!!touched.firstName && !!errors.firstName}
                 helperText={touched.firstName && errors.firstName}
-                sx={{ gridColumn: "span 2" }}
+                sx={{ gridColumn: "span 4" }}
               />
               <TextField
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Apellido"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.lastName}
-                name="apellido"
-                error={!!touched.lastName && !!errors.lastName}
-                helperText={touched.lastName && errors.lastName}
-                sx={{ gridColumn: "span 2" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Correo"
+                label="Duración"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.email}
-                name="correo"
+                name="duracion"
                 error={!!touched.email && !!errors.email}
                 helperText={touched.email && errors.email}
-                sx={{ gridColumn: "span 4" }}
+                sx={{ gridColumn: "span 2" }}
               />
               <TextField
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Número de contacto"
+                label="Precio"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.contact}
-                name="contacto"
+                name="precio"
                 error={!!touched.contact && !!errors.contact}
                 helperText={touched.contact && errors.contact}
-                sx={{ gridColumn: "span 4" }}
+                sx={{ gridColumn: "span 2" }}
               />
             </Box>
-            <Box display="flex" justifyContent="end" mt="20px">
+            <Box display="flex" justifyContent="end" mt="20px" columnGap="6px">
+              <Button variant="text" onClick={resetForm}>
+                Limpiar todo
+              </Button>
               <Button type="submit" color="secondary" variant="contained">
-                Guardar cliente
+                Guardar
               </Button>
             </Box>
           </form>
         )}
       </Formik>
-    </Box>
+    </div>
   );
 };
 
-export default Form;
+export default AdminProcedimientos;

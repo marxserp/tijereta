@@ -1,16 +1,16 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
-import { Link } from "react-router-dom";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
+// import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
+import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
+import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -30,12 +30,13 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
   );
 };
 
-
 const Sidebar = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const user = useSelector((state) => state.user);
+  const nombreCompleto = user ? `${user.nombre} ${user.apellido}` : "";
 
   return (
     <Box
@@ -57,14 +58,14 @@ const Sidebar = () => {
         },
       }}
     >
-     <ProSidebar collapsed={isCollapsed}>
+      <ProSidebar collapsed={isCollapsed} height="100%">
         <Menu iconShape="square">
           {/* LOGO AND MENU ICON */}
           <MenuItem
             onClick={() => setIsCollapsed(!isCollapsed)}
             icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
             style={{
-              margin: "10px 0 20px 0",
+              margin: "0 0 20px 0",
               color: colors.grey[100],
             }}
           >
@@ -88,15 +89,6 @@ const Sidebar = () => {
 
           {!isCollapsed && (
             <Box mb="20px">
-              <Box display="flex" justifyContent="center" alignItems="center">
-                <img
-                  alt="profile-user"
-                  width="70px"
-                  height="70px"
-                  src={`../../assets/user.png`}
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
-                />
-              </Box>
               <Box textAlign="center">
                 <Typography
                   variant="h3"
@@ -104,10 +96,7 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Eliana Guajardo
-                </Typography>
-                <Typography variant="h5" color={colors.greenAccent[500]}>
-                  Administrador
+                  {nombreCompleto}
                 </Typography>
               </Box>
             </Box>
@@ -115,8 +104,8 @@ const Sidebar = () => {
 
           <Box paddingLeft={isCollapsed ? undefined : "6%"}>
             <Item
-              title="Eventos"
-              to="/"
+              title="Agenda"
+              to="/agenda"
               icon={<CalendarTodayOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -129,16 +118,9 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Formulario"
-              to="/form"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Resumen"
-              to="/dashboard"
-              icon={<HomeOutlinedIcon />}
+              title="Procedimientos"
+              to="/procedimientos"
+              icon={<SellOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

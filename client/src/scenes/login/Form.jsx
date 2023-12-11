@@ -34,7 +34,7 @@ const initialValuesRegister = {
   nombre: "",
   apellido: "",
   correo: "",
-  contrasena: ""
+  contrasena: "",
 };
 
 const initialValuesLogin = {
@@ -60,19 +60,22 @@ const Form = () => {
         "http://localhost:8080/auth/register",
         {
           method: "POST",
-          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: formData,
         }
       );
       if (savedUserResponse.ok) {
         const savedUser = await savedUserResponse.json();
         onSubmitProps.resetForm();
-    
+
         if (savedUser) {
           setPageType("login");
         }
       } else {
-        console.error("Error durante el registro: ", savedUserResponse.statusText);
+        console.error(
+          "Error durante el registro: ",
+          savedUserResponse.statusText
+        );
       }
     } catch (error) {
       console.log("Error al registrar usuario: ", error);
@@ -90,7 +93,7 @@ const Form = () => {
       if (loggedInResponse.ok) {
         const loggedIn = await loggedInResponse.json();
         onSubmitProps.resetForm();
-    
+
         // Pasar estado inicio de sesión a estado redux
         if (loggedIn) {
           dispatch(
@@ -99,8 +102,8 @@ const Form = () => {
               token: loggedIn.token,
             })
           );
-          navigate("/home");
-        };
+          navigate("/clientes");
+        }
       } else {
         console.error("Error al iniciar sesión: ", loggedInResponse);
       }
@@ -113,12 +116,12 @@ const Form = () => {
     if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
   };
-  
+
   return (
     <Formik
-    onSubmit={handleFormSubmit}
-    initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
-    validationSchema={isLogin ? loginSchema : registerSchema}
+      onSubmit={handleFormSubmit}
+      initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
+      validationSchema={isLogin ? loginSchema : registerSchema}
     >
       {({
         values,
@@ -147,9 +150,7 @@ const Form = () => {
                   onChange={handleChange}
                   value={values.nombre}
                   name="nombre"
-                  error={
-                    Boolean(touched.nombre) && Boolean(errors.nombre)
-                  }
+                  error={Boolean(touched.nombre) && Boolean(errors.nombre)}
                   helperText={touched.nombre && errors.nombre}
                   sx={{ gridColumn: "span 2" }}
                 />

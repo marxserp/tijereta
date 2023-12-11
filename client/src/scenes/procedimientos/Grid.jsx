@@ -1,14 +1,13 @@
 import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setProcedimientos } from "../../state";
 
-const Procedimientos = () => {
+const ListaProcedimientos = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -20,14 +19,13 @@ const Procedimientos = () => {
     {
       field: "nombre",
       headerName: "Nombre",
-      flex: 1.2,
+      flex: 1.4,
       cellClassName: "name-column--cell",
     },
     {
       field: "tipo",
       headerName: "Tipo",
       flex: 1,
-      cellClassName: "name-column--cell",
     },
     {
       field: "duracion",
@@ -67,11 +65,9 @@ const Procedimientos = () => {
   }, []);
 
   return (
-    <Box m="20px">
-      <Header title="Procedimientos" subtitle="Servicios ofrecidos" />
       <Box
         m="0"
-        height="75vh"
+        height="80vh"
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
@@ -108,7 +104,7 @@ const Procedimientos = () => {
           getRowId={(row) => row._id}
         />
       </Box>
-    </Box>
   );
 };
-export default Procedimientos;
+
+export default ListaProcedimientos;

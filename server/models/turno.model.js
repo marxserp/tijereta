@@ -17,9 +17,12 @@ const turnoSchema = mongoose.Schema(
     fecha: { type: Date, required: true },
     detalle: { type: String, required: true },
     observacion: { type: String, required: true },
+    usuario: { type: String, required: true },
     estado: { type: Boolean, default: 1 },
   },
   { timestamps: true }
 );
 
-export const turnoModel = mongoose.model("Turno", { name: String });
+const turnoModel = mongoose.model("Turno", turnoSchema);
+
+export default turnoModel;

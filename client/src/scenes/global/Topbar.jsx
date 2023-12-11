@@ -1,31 +1,36 @@
-import { Box, IconButton, useTheme } from "@mui/material";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { useDispatch, useSelector } from "react-redux";
+import { setLogout } from "../../state";
+
 import { ColorModeContext, tokens } from "../../theme";
-import InputBase from "@mui/material/InputBase";
+import { Box, IconButton, Typography, Button, useTheme } from "@mui/material";
+
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import SearchIcon from "@mui/icons-material/Search";
+// import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+// import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import LoginIcon from "@mui/icons-material/Login";
 
 const Topbar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const isAuth = Boolean(useSelector((state) => state.token));
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
 
   return (
-    <Box display="flex" justifyContent="space-between" p={2}>
-      {/* SEARCH BAR */}
-      <Box
-        display="flex"
-        backgroundColor={colors.primary[400]}
-        borderRadius="4px"
-      >
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
-        <IconButton type="button" sx={{ p: 1 }}>
-          <SearchIcon />
-        </IconButton>
+    <Box display="flex" justifyContent="space-between" p="0.6rem">
+      {/* LOGO */}
+      <Box>
+        <Typography fontWeight="bold" fontSize="16px" color="primary">
+          TIJERETA:PROTO
+        </Typography>
       </Box>
 
       {/* ICONS */}
@@ -37,15 +42,16 @@ const Topbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <IconButton>
-          <NotificationsOutlinedIcon />
-        </IconButton>
-        <IconButton>
-          <SettingsOutlinedIcon />
-        </IconButton>
-        <IconButton>
-          <PersonOutlinedIcon />
-        </IconButton>
+        <Button
+          size="small"
+          variant="outlined"
+          startIcon={isAuth ? <LogoutOutlinedIcon /> : <LoginIcon />}
+          onClick={
+            isAuth ? () => dispatch(setLogout()) : () => navigate("/auth")
+          }
+        >
+          {isAuth ? `Cerrar sesión` : `Ingresar`}
+        </Button>
       </Box>
     </Box>
   );
