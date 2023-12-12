@@ -5,7 +5,7 @@ const initialState = {
   user: null,
   token: null,
   clientes: [],
-  procedimentos: [],
+  procedimientos: [],
   turnos: [],
 };
 

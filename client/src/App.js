@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+import { ColorModeContext, useMode } from "./theme";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "./scenes/global/Topbar";
-import Sidebar from "./scenes/global/Sidebar";
 import Login from "./scenes/login";
 import Calendar from "./scenes/calendar/calendar";
 import Clientes from "./scenes/clientes";
-import Form from "./scenes/form";
-import Dashboard from "./scenes/dashboard";
 import FAQ from "./scenes/faq";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import { ColorModeContext, useMode } from "./theme";
+import Procedimientos from "./scenes/procedimientos";
 
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+  const isAuth = Boolean(useSelector((state) => state.token));
 
   return (
     <BrowserRouter>
@@ -23,18 +23,26 @@ function App() {
           <CssBaseline />
 
           <div className="app">
-            <Sidebar isSidebar={isSidebar} />
-
             <main className="content">
               <Topbar setIsSidebar={setIsSidebar} />
 
               <Routes>
-                <Route path="/logon" element={<Login />} />
-                <Route path="/" element={<Calendar />} />
-                <Route path="/home" element={<Calendar />} />
-                <Route path="/clientes" element={<Clientes />} />
-                <Route path="/form" element={<Form />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/" element={<Login />} />
+                <Route path="/auth" element={<Login />} />
+                <Route
+                  path="/agenda"
+                  element={isAuth ? <Calendar /> : <Navigate to="/auth" />}
+                />
+                <Route
+                  path="/clientes"
+                  element={isAuth ? <Clientes /> : <Navigate to="/auth" />}
+                />
+                <Route
+                  path="/procedimientos"
+                  element={
+                    isAuth ? <Procedimientos /> : <Navigate to="/auth" />
+                  }
+                />
                 <Route path="/ayuda" element={<FAQ />} />
               </Routes>
             </main>

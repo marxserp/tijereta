@@ -1,24 +1,83 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setTurnos } from "../../state";
+
+import {
+  Box,
+  FormControl,
+  List,
+  ListItem,
+  ListItemText,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import FullCalendar, { formatDate } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
-import {
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import Header from "../../components/Header";
+import { Formik } from "formik";
+import * as yup from "yup";
+import dayjs from "dayjs";
 import { tokens } from "../../theme";
+
+import Header from "../../components/Header";
 
 const Calendar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
+
+  const dispatch = useDispatch();
+  const turnos = useSelector((state) => state.turnos);
+  const token = useSelector((state) => state.token);
+
+  const getTurnos = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/turnos", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        dispatch(setTurnos({ turnos: data }));
+      } else {
+        console.error(
+          "Error durante la carga de turnos: ",
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.log("Error al cargar turnos: ", error);
+    }
+  };
+
+  const eliminarTurno = async (values, onSubmitProps) => {
+    const formData = URLSearchParams(values);
+    try {
+      const response = await fetch("http://localhost:8080/turnos", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData,
+      });
+      if (response.ok) {
+        onSubmitProps.resetForm();
+      } else {
+        console.log("Error eliminando turno: ", response.statusText);
+      }
+    } catch (error) {
+      console.log("Error al eliminar turno: ", error);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(setTurnos({ turnos: [] }));
+    getTurnos();
+  }, []);
 
   const handleDateClick = (selected) => {
     const title = prompt("Ingresar título del nuevo evento");
@@ -49,7 +108,7 @@ const Calendar = () => {
         subtitle="Cronograma con todos los eventos y sus estados"
       />
 
-      <Box display="flex" justifyContent="space-between">
+      <Box Boxdisplay="flex" justifyContent="space-between">
         {/* Barra lateral */}
         <Box
           flex="1 1 32%"
@@ -57,7 +116,40 @@ const Calendar = () => {
           p="15px"
           borderRadius="4px"
         >
-          <Typography variant="h5">Próximos</Typography>
+          <Box display="flex" columnGap="8px" rowGap="8px">
+            <Formik></Formik>
+            <FormControl fullWidth>
+              <DatePicker defaultValue={dayjs("2022-04-17")} />
+              <Select value="Procedimiento nombre" name="Procediminento">
+                <MenuItem value="Proc1">
+                  <Typography>Proc1</Typography>
+                </MenuItem>
+                <MenuItem value="Proc2">
+                  <Typography>Proc2</Typography>
+                </MenuItem>
+              </Select>
+
+              <Select value="Procedimiento nombre2" name="Procediminento Adic">
+                <MenuItem value="Proc1">
+                  <Typography>Proc1</Typography>
+                </MenuItem>
+                <MenuItem value="Proc2">
+                  <Typography>Proc2</Typography>
+                </MenuItem>
+              </Select>
+              {/* CLIENT PICKER */}
+              <TextField
+                fullWidth
+                variant="outlined"
+                type="text"
+                label="Nombre"
+                name="nombre"
+              />
+            </FormControl>
+          </Box>
+          <Typography variant="h5" mt="20px">
+            Próximos
+          </Typography>
           <List>
             {currentEvents.map((event) => (
               <ListItem
