@@ -21,18 +21,11 @@ const Clientes = () => {
           title="Clientes"
           subtitle="Adminstrá, creá, editá y borrá tus clientes."
         />
-        <Box
-          width="100%"
-          padding="0.6rem"
-          display="flex"
-          justifyContent="space-between"
-        >
-          <Box flexBasis="38%" mr="2rem">
-            <AdminClientes currentID={currentID} setCurrentID={setCurrentID} />
-          </Box>
-          <Box flexBasis="60%">
-            <ListaClientes setCurrentID={setCurrentID} />
-          </Box>
+        <Box flexBasis="38%">
+          <AdminClientes currentID={currentID} setCurrentID={setCurrentID} />
+        </Box>
+        <Box flexBasis="60%">
+          <ListaClientes setCurrentID={setCurrentID} />
         </Box>
       </Box>
     </Box>

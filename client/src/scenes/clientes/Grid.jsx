@@ -1,6 +1,7 @@
-import { useTheme, Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
+import { useTheme } from "@mui/material";
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";

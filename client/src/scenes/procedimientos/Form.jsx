@@ -8,8 +8,8 @@ import { createProcedimiento } from "../../actions/procedimientos";
 
 const valueValidation = yup.object().shape({
   nombre: yup.string().required("Obligatorio"),
-  tipo: yup.string().required("Obligatorio"),
-  duracion: yup.number().required("Obligatorio"),
+  tipo: yup.number().required("Obligatorio").positive(),
+  duracion: yup.number().required("Obligatorio").positive().integer(),
 });
 
 const initialValues = {
@@ -72,7 +72,7 @@ const AdminProcedimientos = () => {
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
+                type="number"
                 label="Duración"
                 onBlur={handleBlur}
                 onChange={handleChange}
@@ -90,7 +90,7 @@ const AdminProcedimientos = () => {
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
+                type="number"
                 label="Precio"
                 onBlur={handleBlur}
                 onChange={handleChange}

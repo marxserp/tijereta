@@ -7,7 +7,7 @@ const procedimientoSchema = mongoose.Schema(
     tipo: { type: Boolean, default: 1 },
     duracion: { type: String, trim: true },
     precio: { type: String, default: 0 },
-    usuario: { type: String },
+    usuario: { type: String, default: "0" },
     estado: { type: Boolean, default: 1 },
   },
   { timestamps: true }

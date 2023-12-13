@@ -13,6 +13,7 @@ export const createCliente = (cliente) => async (dispatch) => {
 export const getAllClientes = () => async (dispatch) => {
   try {
     const { data } = await api.fetchAllClientes();
+    console.log(data);
     dispatch(getClientes({ clientes: data }));
   } catch (error) {
     console.log(`Action FETCH_ALL error: ${error}`);

@@ -10,12 +10,12 @@ import Sidebar from "../global/Sidebar";
 const Procedimientos = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  // const [isSidebar, setIsSidebar] = useState(true);
+  const [isSidebar, setIsSidebar] = useState(true);
   const [currentID, setCurrentID] = useState(0);
 
   return (
     <Box height="100%" width="100%" display="flex" position="relative">
-      <Sidebar />
+      <Sidebar isSidebar={isSidebar} />
       <Box width="100%" m="20px">
         <Header
           title="Procedimientos"
