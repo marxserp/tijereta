@@ -11,6 +11,7 @@ const Clientes = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isSidebar, setIsSidebar] = useState(true);
+  const [currentID, setCurrentID] = useState(0);
 
   return (
     <Box position="relative" display="flex" justifyContent="center">
@@ -27,10 +28,10 @@ const Clientes = () => {
           justifyContent="space-between"
         >
           <Box flexBasis="38%" mr="2rem">
-            <AdminClientes />
+            <AdminClientes currentID={currentID} setCurrentID={setCurrentID} />
           </Box>
           <Box flexBasis="60%">
-            <ListaClientes />
+            <ListaClientes setCurrentID={setCurrentID} />
           </Box>
         </Box>
       </Box>

@@ -11,22 +11,24 @@ const Procedimientos = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   // const [isSidebar, setIsSidebar] = useState(true);
+  const [currentID, setCurrentID] = useState(0);
 
   return (
     <Box height="100%" width="100%" display="flex" position="relative">
       <Sidebar />
-      <Box
-        width="100%"
-        padding="1rem"
-        display="flex"
-        gap="0.3rem"
-        justifyContent="space-between"
-      >
+      <Box width="100%" m="20px">
+        <Header
+          title="Procedimientos"
+          subtitle="Adminstrá los servicios ofrecidos por tu emprendimiento."
+        />
         <Box flexBasis="38%">
-          <AdminProcedimientos />
+          <AdminProcedimientos
+            currentID={currentID}
+            setCurrentID={setCurrentID}
+          />
         </Box>
         <Box flexBasis="60%" mt="1.2rem">
-          <ListaProcedimientos />
+          <ListaProcedimientos setCurrentID={setCurrentID} />
         </Box>
       </Box>
     </Box>

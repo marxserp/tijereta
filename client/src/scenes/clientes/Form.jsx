@@ -3,7 +3,8 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { createCliente } from "../../actions/clientes";
 
 const valueValidation = yup.object().shape({
   nombre: yup.string(),
@@ -18,31 +19,37 @@ const initialValues = {
   contacto: "",
 };
 
-const AdminClientes = () => {
+const AdminClientes = ({ currentID, setCurrentID }) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
+  const dispatch = useDispatch();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
 
+  /* const post = useSelector((state) =>
+    currentID ? state.posts.find((message) => message._id === currentID) : null
+  ); */
+
   const handleFormSubmit = async (values, onSubmitProps) => {
-    try {
-      const formData = new URLSearchParams(values);
-      formData.append("usuario", _id);
+    /* try {
       const savedClienteResponse = await fetch(
         "http://localhost:8080/clientes",
         {
           method: "POST",
           body: formData,
         }
-      );
-      if (savedClienteResponse.ok) {
-        onSubmitProps.resetForm();
-      } else {
-        console.log("Error creando cliente: ", savedClienteResponse.statusText);
-      }
-    } catch (error) {
-      console.log("Error al crear un cliente: ", error);
-    }
+        );
+        if (savedClienteResponse.ok) {
+          onSubmitProps.resetForm();
+        } else {
+          console.log("Error creando cliente: ", savedClienteResponse.statusText);
+        }
+      } catch (error) {
+        console.log("Error al crear un cliente: ", error);
+      } */
+    const formData = new URLSearchParams(values);
+    formData.append("usuario", _id);
+    dispatch(createCliente(formData));
   };
 
   return (

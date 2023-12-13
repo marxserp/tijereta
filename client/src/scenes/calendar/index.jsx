@@ -10,6 +10,8 @@ import SideContent from "./SideContent";
 import AdminTurnos from "./Form";
 
 const Agenda = () => {
+  const [turnoId, setTurnoId] = useState(0);
+
   return (
     <Box position="relative" display="flex" justifyContent="center">
       <Sidebar isSidebar={isSidebar} />
@@ -25,7 +27,7 @@ const Agenda = () => {
           justifyContent="space-between"
         >
           <Box flexBasis="38%" mr="2rem">
-            <AdminTurnos />
+            <AdminTurnos turno={turnoId} />
           </Box>
           <Box flexBasis="60%">
             <SideContent />

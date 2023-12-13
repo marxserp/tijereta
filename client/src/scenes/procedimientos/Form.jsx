@@ -3,7 +3,8 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { createProcedimiento } from "../../actions/procedimientos";
 
 const valueValidation = yup.object().shape({
   nombre: yup.string().required("Obligatorio"),
@@ -20,13 +21,12 @@ const initialValues = {
 const AdminProcedimientos = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
+  const dispatch = useDispatch();
   const { _id } = useSelector((state) => state.user);
   // const token = useSelector((state) => state.token);
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    try {
-      const formData = new URLSearchParams(values);
-      formData.append("usuario", _id);
+    /* try {
       const savedProcedimientoResponse = await fetch(
         "http://localhost:8080/procedimientos",
         {
@@ -45,7 +45,10 @@ const AdminProcedimientos = () => {
       }
     } catch (error) {
       console.log("Error al crear un procedimiento: ", error);
-    }
+    } */
+    const formData = new URLSearchParams(values);
+    formData.append("usuario", _id);
+    dispatch(createProcedimiento(formData));
   };
 
   return (

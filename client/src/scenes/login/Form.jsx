@@ -15,6 +15,7 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin } from "../../state";
+import { signIn, signUp } from "../../actions/auth";
 
 // Restricciones
 const registerSchema = yup.object().shape({
@@ -52,7 +53,7 @@ const Form = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const register = async (values, onSubmitProps) => {
+  /* const register = async (values, onSubmitProps) => {
     try {
       const formData = new URLSearchParams(values);
       // Registrar usuario y obtener respuesta
@@ -80,9 +81,9 @@ const Form = () => {
     } catch (error) {
       console.log("Error al registrar usuario: ", error);
     }
-  };
+  }; */
 
-  const login = async (values, onSubmitProps) => {
+  /* const login = async (values, onSubmitProps) => {
     try {
       // Iniciar sesión y esperar respuesta
       const loggedInResponse = await fetch("http://localhost:8080/auth/login", {
@@ -110,11 +111,12 @@ const Form = () => {
     } catch (error) {
       console.log("Error iniciando sesión", error);
     }
-  };
+  }; */
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    if (isLogin) await login(values, onSubmitProps);
-    if (isRegister) await register(values, onSubmitProps);
+    if (isLogin) dispatch(signIn(values, navigate));
+    if (isRegister) dispatch(signUp(values, navigate));
+    onSubmitProps.resetForm();
   };
 
   return (

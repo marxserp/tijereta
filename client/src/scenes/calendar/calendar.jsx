@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setTurnos } from "../../state";
+import { getTurnos } from "../../state";
 
 import {
   Box,
@@ -36,7 +36,7 @@ const Calendar = () => {
   const turnos = useSelector((state) => state.turnos);
   const token = useSelector((state) => state.token);
 
-  const getTurnos = async () => {
+  /* const getTurnos = async () => {
     try {
       const response = await fetch("http://localhost:8080/turnos", {
         method: "GET",
@@ -54,9 +54,9 @@ const Calendar = () => {
     } catch (error) {
       console.log("Error al cargar turnos: ", error);
     }
-  };
+  }; */
 
-  const eliminarTurno = async (values, onSubmitProps) => {
+  /* const eliminarTurno = async (values, onSubmitProps) => {
     const formData = URLSearchParams(values);
     try {
       const response = await fetch("http://localhost:8080/turnos", {
@@ -72,12 +72,12 @@ const Calendar = () => {
     } catch (error) {
       console.log("Error al eliminar turno: ", error);
     }
-  };
+  }; */
 
-  useEffect(() => {
+  /* useEffect(() => {
     dispatch(setTurnos({ turnos: [] }));
     getTurnos();
-  }, []);
+  }, []); */
 
   const handleDateClick = (selected) => {
     const title = prompt("Ingresar título del nuevo evento");
