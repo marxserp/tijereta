@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   mode: "light",
+  isLoading: null,
   user: null,
   token: null,
-  isLoading: null,
   clientes: [],
   procedimientos: [],
   turnos: [],
