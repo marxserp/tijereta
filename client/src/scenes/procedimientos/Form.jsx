@@ -1,4 +1,4 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, InputAdornment } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -26,26 +26,6 @@ const AdminProcedimientos = () => {
   // const token = useSelector((state) => state.token);
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    /* try {
-      const savedProcedimientoResponse = await fetch(
-        "http://localhost:8080/procedimientos",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formData,
-        }
-      );
-      if (savedProcedimientoResponse.ok) {
-        onSubmitProps.resetForm();
-      } else {
-        console.log(
-          "Error creando procedimiento: ",
-          savedProcedimientoResponse.statusText
-        );
-      }
-    } catch (error) {
-      console.log("Error al crear un procedimiento: ", error);
-    } */
     const formData = new URLSearchParams(values);
     formData.append("usuario", _id);
     dispatch(createProcedimiento(formData));
@@ -100,6 +80,11 @@ const AdminProcedimientos = () => {
                 name="duracion"
                 error={!!touched.email && !!errors.email}
                 helperText={touched.email && errors.email}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">min</InputAdornment>
+                  ),
+                }}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -113,6 +98,11 @@ const AdminProcedimientos = () => {
                 name="precio"
                 error={!!touched.contact && !!errors.contact}
                 helperText={touched.contact && errors.contact}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                }}
                 sx={{ gridColumn: "span 2" }}
               />
             </Box>

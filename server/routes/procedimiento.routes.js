@@ -11,9 +11,9 @@ import {
 const router = express.Router();
 
 router.route("/").post(createProcedimiento);
-router.route("/").post(getAllProcedimientos);
+router.route("/").get(getAllProcedimientos);
 router.route("/:id").get(getSingleProcedimiento);
 router.route("/:id").patch(updateProcedimiento);
-router.route("/:id").patch(deleteProcedimiento);
+// router.route("/:id").patch(deleteProcedimiento);
 
 export default router;

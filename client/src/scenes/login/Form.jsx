@@ -2,6 +2,8 @@ import { useState } from "react";
 import {
   Box,
   Button,
+  InputAdornment,
+  IconButton,
   TextField,
   useMediaQuery,
   Typography,
@@ -9,6 +11,8 @@ import {
 } from "@mui/material";
 import FlexBetween from "../../components/FlexBetween";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Formik } from "formik";
 import * as yup from "yup";
 
@@ -44,74 +48,20 @@ const initialValuesLogin = {
 };
 
 const Form = () => {
-  const { palette } = useTheme();
-  const isNonMobile = useMediaQuery("(min-width:600px)");
-
-  const [pageType, setPageType] = useState("login");
-  const isLogin = pageType === "login";
-  const isRegister = pageType === "register";
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  /* const register = async (values, onSubmitProps) => {
-    try {
-      const formData = new URLSearchParams(values);
-      // Registrar usuario y obtener respuesta
-      const savedUserResponse = await fetch(
-        "http://localhost:8080/auth/register",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formData,
-        }
-      );
-      if (savedUserResponse.ok) {
-        const savedUser = await savedUserResponse.json();
-        onSubmitProps.resetForm();
+  const [pageType, setPageType] = useState("login");
+  const [showPassword, setShowPassword] = useState(false);
+  const { palette } = useTheme();
+  const isNonMobile = useMediaQuery("(min-width:600px)");
+  const isLogin = pageType === "login";
+  const isRegister = pageType === "register";
 
-        if (savedUser) {
-          setPageType("login");
-        }
-      } else {
-        console.error(
-          "Error durante el registro: ",
-          savedUserResponse.statusText
-        );
-      }
-    } catch (error) {
-      console.log("Error al registrar usuario: ", error);
-    }
-  }; */
-
-  /* const login = async (values, onSubmitProps) => {
-    try {
-      // Iniciar sesión y esperar respuesta
-      const loggedInResponse = await fetch("http://localhost:8080/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (loggedInResponse.ok) {
-        const loggedIn = await loggedInResponse.json();
-        onSubmitProps.resetForm();
-
-        // Pasar estado inicio de sesión a estado redux
-        if (loggedIn) {
-          dispatch(
-            setLogin({
-              user: loggedIn.usuario,
-              token: loggedIn.token,
-            })
-          );
-          navigate("/clientes");
-        }
-      } else {
-        console.error("Error al iniciar sesión: ", loggedInResponse);
-      }
-    } catch (error) {
-      console.log("Error iniciando sesión", error);
-    }
-  }; */
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) dispatch(signIn(values, navigate));
@@ -181,13 +131,25 @@ const Form = () => {
             />
             <TextField
               label="Contraseña"
-              type="contrasena"
+              type={showPassword ? "text" : "password"}
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.contrasena}
               name="contrasena"
               error={Boolean(touched.contrasena) && Boolean(errors.contrasena)}
               helperText={touched.contrasena && errors.contrasena}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
               sx={{ gridColumn: "span 4" }}
             />
           </Box>

@@ -31,22 +31,6 @@ const AdminClientes = ({ currentID, setCurrentID }) => {
   ); */
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    /* try {
-      const savedClienteResponse = await fetch(
-        "http://localhost:8080/clientes",
-        {
-          method: "POST",
-          body: formData,
-        }
-        );
-        if (savedClienteResponse.ok) {
-          onSubmitProps.resetForm();
-        } else {
-          console.log("Error creando cliente: ", savedClienteResponse.statusText);
-        }
-      } catch (error) {
-        console.log("Error al crear un cliente: ", error);
-      } */
     const formData = new URLSearchParams(values);
     formData.append("usuario", _id);
     dispatch(createCliente(formData));

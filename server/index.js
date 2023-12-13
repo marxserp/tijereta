@@ -1,28 +1,41 @@
 import express from "express";
 import bodyParser from "body-parser";
-import mongoose from "mongoose";
 import cors from "cors";
-// import dotenv from "dotenv";
+import * as dotenv from "dotenv";
+import connectDB from "./mongodb/connect.js";
+// Rutas
+import authRouter from "./routes/auth.routes.js";
+import turnoRouter from "./routes/turno.routes.js";
+import clienteRouter from "./routes/cliente.routes.js";
+import procedimientoRouter from "./routes/procedimiento.routes.js";
 
-const app = express();
+// Configuración
+dotenv.config();
+const app = express(); // Initializing app
+app.use(bodyParser.json({ limit: "30mb", extended: "true" })); // Límite para los archivos enviados desde el front
+app.use(bodyParser.urlencoded({ limit: "30mb", extended: "true" }));
+app.use(cors()); // Añadido de middleware
 
-app.use(bodyParser.json({ limit: "5mb", extended: "true" }));
-app.use(bodyParser.urlencoded({ limit: "5mb", extended: "true" }));
-app.use(cors());
+app.get("/", (req, res) => {
+  res.send({ message: "Hello World!" });
+});
 
-const CONNECTION_URL =
-  "mongodb+srv://marserp2900:22Ma00Pa71Tu70Mi22@arimana.iwjng0i.mongodb.net/?retryWrites=true&w=majority";
-const PORT = process.env.PORT || 5000;
+// Rutas
+app.use("/auth", authRouter);
+app.use("/turnos", turnoRouter);
+app.use("/procedimientos", procedimientoRouter);
+app.use("/clientes", clienteRouter);
 
-// dotenv.config();
+// Mangosta
+const startServer = async () => {
+  try {
+    connectDB(process.env.MONGODB_URL);
+    app.listen(8080, () =>
+      console.log("Server started on port http://localhost:8080")
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-mongoose
-  .connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() =>
-    app.listen(PORT, () => console.log(`Server running on port:, ${PORT}`))
-  )
-  .catch((error) => console.log(error.message));
-
-// mongoose.set("useFindAndModify", false);
-
-// TODO: Connect to MongoDB
+startServer();

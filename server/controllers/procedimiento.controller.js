@@ -2,18 +2,21 @@ import mongoose from "mongoose";
 import procedimientoModel from "../models/procedimiento.model.js";
 
 export const createProcedimiento = async (req, res) => {
-  const { nombre, descripcion, duracion, precio } = req.body;
-  const newProcedimiento = new procedimientoModel({
-    nombre,
-    descripcion,
-    duracion,
-    precio,
-  });
   try {
+    const { nombre, descripcion, duracion, precio, usuario } = req.body;
+    const newProcedimiento = new procedimientoModel({
+      nombre,
+      descripcion,
+      duracion,
+      precio,
+      usuario,
+    });
     await newProcedimiento.save();
-    res.status(200).json(newProcedimiento);
+    res.status(201).json(newProcedimiento);
   } catch (error) {
-    res.status(409).json({ message: error.message });
+    res.status(500).json({
+      message: `Error de controlador al registrar un cliente: ${error.message}`,
+    });
   }
 };
 

@@ -13,7 +13,6 @@ export const createProcedimiento = (procedimiento) => async (dispatch) => {
 export const getAllProcedimientos = () => async (dispatch) => {
   try {
     const { data } = await api.fetchAllProcedimientos();
-    console.log(data);
     dispatch(getProcedimientos({ procedimientos: data }));
   } catch (error) {
     console.log(`Action FETCH_ALL error: ${error}`);
