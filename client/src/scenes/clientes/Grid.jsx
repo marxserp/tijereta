@@ -5,18 +5,25 @@ import { useTheme } from "@mui/material";
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { getClientes } from "../../state/index";
+import { getAllClientes } from "../../actions/clientes";
 
 const ListaClientes = ({ setCurrentID }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const dispatch = useDispatch();
-  const clientes = useSelector((state) => state.clientes);
+  const { clientes } = useSelector((state) => state.clientes);
   const isLoading = useSelector((state) => state.isLoading);
   const token = useSelector((state) => state.token);
 
+  console.log(clientes);
+
+
   const columns = [
+
     {
+
       field: "nombre",
       headerName: "Nombre",
       flex: 1.4,
@@ -39,6 +46,11 @@ const ListaClientes = ({ setCurrentID }) => {
       flex: 1,
     },
   ];
+
+
+  useEffect(() => {
+    console.log("Log from useEfffect: ")
+  }, []);
 
   return (
     <Box
@@ -77,8 +89,8 @@ const ListaClientes = ({ setCurrentID }) => {
         rows={clientes}
         columns={columns}
         components={{ Toolbar: GridToolbar }}
-        getRowId={(row) => row._id}
-        onRowClick={(p) => setCurrentID(p.row._id)}
+        getRowId={(row) => row?._id}
+        onRowClick={(p) => setCurrentID(p?.row?._id)}
       />
     </Box>
   );

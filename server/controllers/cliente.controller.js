@@ -25,6 +25,7 @@ export const createCliente = async (req, res) => {
 export const getAllClientes = async (req, res) => {
   try {
     const clientes = await clienteModel.find();
+    console.log("Log from controller: ", clientes);
     res.status(200).json(clientes);
   } catch (error) {
     res.status(404).json({ message: error.message });

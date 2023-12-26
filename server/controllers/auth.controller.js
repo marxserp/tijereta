@@ -5,7 +5,6 @@ import Usuario from "../models/usuario.model.js";
 // Registro
 
 export const register = async (req, res) => {
-  console.log("Datos recibidos:", req.body);
   try {
     const { nombre, apellido, correo, contrasena } = req.body;
 
