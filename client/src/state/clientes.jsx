@@ -26,5 +26,23 @@ export const updateCliente = createAsyncThunk("clientes/updateCliente", async (c
 export const clientesSlice = createSlice({
     name: "clientes",
     initialState,
-    reducers: {}
+    reducers: {
+        clienteAdded: (state, action) => {
+            state.clientes.push(action.payload);
+        }
+    },
+    extraReducers(builder) {
+        builder
+            .addCase(fetchClientes.pending, (state, action) => {
+                state.status = "loading";
+            })
+            .addCase(fetchClientes.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                state.clientes = state.clientes.concat(action.payload);
+            })
+            .addCase(fetchClientes.rejected, (state, action) => {
+                state.status = "failed";
+                error = action.error.message;
+            })
+    }
 });
