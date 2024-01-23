@@ -16,7 +16,7 @@ export const createCliente = (newCliente) => API.post("/clientes", newCliente);
 export const fetchAllClientes = () => API.get("/clientes");
 export const fetchSingleCliente = (id) => API.get(`/clientes/${id}`);
 export const updateCliente = (id, updatedCliente) =>
-  API.patch(`/clientes/${id}`, updatedCliente);
+  API.patch(`/clientes/${id}`, updatedCliente); // Chequear si es conveniente usar PUT o PATCH!
 export const deleteCliente = (id) => API.delete(`/clientes/${id}`);
 
 export const createProcedimiento = (newProcedimiento) =>

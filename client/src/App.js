@@ -16,20 +16,8 @@ function App() {
   const [isSidebar, setIsSidebar] = useState(true);
   const isAuth = Boolean(useSelector((state) => state.token));
 
-  return (
-    <BrowserRouter>
-      <ColorModeContext.Provider value={colorMode}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-
-          <div className="app">
-            <main className="content">
-              <Topbar setIsSidebar={setIsSidebar} />
-
-              <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/auth" element={<Login />} />
-                <Route
+  /*
+  <Route
                   path="/agenda"
                   element={isAuth ? <Calendar /> : <Navigate to="/auth" />}
                 />
@@ -43,6 +31,23 @@ function App() {
                     isAuth ? <Procedimientos /> : <Navigate to="/auth" />
                   }
                 />
+  */
+  return (
+    <BrowserRouter>
+      <ColorModeContext.Provider value={colorMode}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+
+          <div className="app">
+            <main className="content">
+              <Topbar setIsSidebar={setIsSidebar} />
+
+              <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/auth" element={<Login />} />
+                <Route path="/agenda" element={<Calendar />} />
+                <Route path="/clientes" element={<Clientes />} />
+                <Route path="/procedimientos" element={<Procedimientos />} />
                 <Route path="/ayuda" element={<FAQ />} />
               </Routes>
             </main>

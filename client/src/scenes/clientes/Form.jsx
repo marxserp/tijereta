@@ -23,7 +23,7 @@ const AdminClientes = ({ currentID, setCurrentID }) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const dispatch = useDispatch();
-  const { _id } = useSelector((state) => state.user);
+  const _id = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
 
   /* const post = useSelector((state) =>
