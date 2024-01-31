@@ -5,15 +5,21 @@ import { useTheme } from "@mui/material";
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchAllProcedimientos } from "../../state/procedimientos";
 
 const ListaProcedimientos = ({ setCurrentID }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const dispatch = useDispatch();
-  const procedimientos = useSelector((state) => state.procedimientos);
+  const { procedimientos } = useSelector((state) => state.procedimientos);
   const isLoading = useSelector((state) => state.isLoading);
   const token = useSelector((state) => state.token);
+  console.log(procedimientos);
+
+  useEffect(() => {
+    dispatch(fetchAllProcedimientos());
+  }, []);
 
   const columns = [
     {

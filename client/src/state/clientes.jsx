@@ -21,16 +21,6 @@ export const fetchClientes = createAsyncThunk(
   }
 );
 
-export const fetchingClientes = clientes async => {
-  try {
-    const response = await api.fetchAllClientes();
-    console.log("Log from Async_fetchClientes", response.data);
-    return response.data;
-  } catch (err) {
-    return thunkAPI.rejectWithValue({ error: err.message });
-  }
-}
-
 export const createCliente = createAsyncThunk(
   "clientes/createCliente",
   async (cliente, thunkAPI) => {

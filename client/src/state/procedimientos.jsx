@@ -8,8 +8,8 @@ const initialState = {
 };
 
 // Async OPs
-export const fetchProcedimientos = createAsyncThunk(
-  "procedimientos/fetchProcedimientos",
+export const fetchAllProcedimientos = createAsyncThunk(
+  "procedimientos/fetchAllProcedimientos",
   async (thunkAPI) => {
     try {
       const response = await api.fetchAllProcedimientos();
@@ -44,7 +44,10 @@ const procedimientosSlice = createSlice({
       state.procedimientos.push(action.payload);
     },
   },
-  extraReducers: {
+  extraReducers: (builder) => {
+    builder.addCase(fetchAllProcedimientos.fulfilled, (state, action) => {
+      state.procedimientos = action.payload;
+    }); /* 
     [fetchProcedimientos.pending]: (state, action) => {
       state.status = "loading";
     },
@@ -54,7 +57,7 @@ const procedimientosSlice = createSlice({
     },
     [fetchProcedimientos.rejected]: (state, action) => {
       state.error = action.error.message;
-    },
+    }, */
   },
 });
 
