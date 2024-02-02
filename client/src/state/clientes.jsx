@@ -8,12 +8,11 @@ const initialState = {
 };
 
 // Async OPs
-export const fetchClientes = createAsyncThunk(
-  "clientes/fetchClientes",
+export const fetchAllClientes = createAsyncThunk(
+  "clientes/fetchAllClientes",
   async (thunkAPI) => {
     try {
       const response = await api.fetchAllClientes();
-      console.log("Log from Async_fetchClientes", response.data);
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue({ error: err.message });
@@ -45,31 +44,10 @@ const clientesSlice = createSlice({
       state.clientes.push(action.payload);
     },
   },
-  extraReducers: {
-    [fetchClientes.pending]: (state, action) => {
-      state.status = "loading";
-    },
-    [fetchClientes.fulfilled]: (state, action) => {
-      state.status = "successful";
-      // state.clientes = state.clientes.concat(action.payload);
-      // state.clientes.push(action.payload.clientes);
-      state.clientes = action.payload.clientes;
-    },
-    [fetchClientes.rejected]: (state, action) => {
-      state.error = action.error.message;
-    },
-    /* builder
-      .addCase(fetchClientes.pending, (state, action) => {
-        state.status = "loading";
-      })
-      .addCase(fetchClientes.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.clientes = state.clientes.concat(action.payload);
-      })
-      .addCase(fetchClientes.rejected, (state, action) => {
-        state.status = "failed";
-        error = action.error.message;
-      }); */
+  extraReducers: (builder) => {
+    builder.addCase(fetchAllClientes.fulfilled, (state, action) => {
+      state.clientes = action.payload;
+    });
   },
 });
 

@@ -15,7 +15,6 @@ const ListaProcedimientos = ({ setCurrentID }) => {
   const { procedimientos } = useSelector((state) => state.procedimientos);
   const isLoading = useSelector((state) => state.isLoading);
   const token = useSelector((state) => state.token);
-  console.log(procedimientos);
 
   useEffect(() => {
     dispatch(fetchAllProcedimientos());

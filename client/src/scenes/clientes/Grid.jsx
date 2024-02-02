@@ -5,34 +5,14 @@ import { useTheme } from "@mui/material";
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-//import { getClientes } from "../../state/index";
-//import { getClientes } from "../../state/index";
-//import { getAllClientes } from "../../actions/clientes";
-import { fetchClientes } from "../../state/clientes";
-import { fetchingClientes } from "../../state/clientes";
-import qs from "query-string";
-const URL = "http://localhost:8080/clientes";
+import { fetchAllClientes } from "../../state/clientes";
 
-// FUNCA
 const ListaClientes = ({ setCurrentID }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const dispatch = useDispatch();
-  const clientes = useSelector((state) => state.clientes);
-  /* const isLoading = useSelector((state) => state.isLoading);
-  const token = useSelector((state) => state.token); */
-
-  const [clientArray, setClientArray] = useState([]);
-  const getClientes = async () => {
-    try {
-      const res = await fetch("http://localhost:8080/clientes");
-      const data = await res.json();
-      setClientArray(data);
-    } catch (error) {
-      console.error("Error fetching clients:", error);
-    }
-  };
+  const { clientes } = useSelector((state) => state.clientes);
 
   const columns = [
     {
@@ -60,7 +40,7 @@ const ListaClientes = ({ setCurrentID }) => {
   ];
 
   useEffect(() => {
-    getClientes();
+    dispatch(fetchAllClientes());
   }, []);
 
   return (
@@ -97,7 +77,7 @@ const ListaClientes = ({ setCurrentID }) => {
       }}
     >
       <DataGrid
-        rows={clientArray}
+        rows={clientes}
         columns={columns}
         components={{ Toolbar: GridToolbar }}
         getRowId={(row) => row._id}
