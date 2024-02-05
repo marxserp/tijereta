@@ -3,7 +3,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { useTheme } from "@mui/material";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllClientes } from "../../state/clientes";
 
@@ -13,6 +13,10 @@ const ListaClientes = ({ setCurrentID }) => {
 
   const dispatch = useDispatch();
   const { clientes } = useSelector((state) => state.clientes);
+
+  useEffect(() => {
+    dispatch(fetchAllClientes());
+  }, []);
 
   const columns = [
     {
@@ -38,10 +42,6 @@ const ListaClientes = ({ setCurrentID }) => {
       flex: 1,
     },
   ];
-
-  useEffect(() => {
-    dispatch(fetchAllClientes());
-  }, []);
 
   return (
     <Box
