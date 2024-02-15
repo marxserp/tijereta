@@ -3,7 +3,7 @@ import * as api from "../api/index.js";
 
 const initialState = {
   mode: "light",
-  user: null,
+  usuario: null,
   token: null,
   status: "idle",
   error: null,
@@ -39,41 +39,42 @@ const authSlice = createSlice({
   reducers: {
     /* setLogin: (state, action) => {
       localStorage.setItem("profile", JSON.stringify({ ...action?.payload }));
-      state.user = action.payload.user;
+      state.usuario = action.payload.usuario;
       state.token = action.payload.token;
     }, */
     setLogout: (state) => {
       localStorage.clear();
-      state.user = null;
+      state.usuario = null;
       state.token = null;
     },
   },
-  extraReducers: {
-    [logIn.pending]: (state, action) => {
+  extraReducers: (builder) => {
+    builder.addCase(logIn.pending, (state, action) => {
       state.status = "loading";
-    },
-    [logIn.fulfilled]: (state, action) => {
+    });
+    builder.addCase(logIn.fulfilled, (state, action) => {
       state.status = "successful";
       localStorage.setItem("profile", JSON.stringify({ ...action?.payload }));
-      state.user = action.payload.user;
+      state.usuario = action.payload.usuario;
       state.token = action.payload.token;
-    },
-    [logIn.rejected]: (state, action) => {
+    });
+    builder.addCase(logIn.rejected, (state, action) => {
       state.error = action.error.message;
-    },
-    [signUp.pending]: (state, action) => {
+    });
+    builder.addCase(signUp.pending, (state, action) => {
       state.status = "loading";
-    },
-    [signUp.fulfilled]: (state, action) => {
+    });
+    builder.addCase(signUp.fulfilled, (state, action) => {
       state.status = "successful";
       localStorage.setItem("profile", JSON.stringify({ ...action?.payload }));
-      state.user = action.payload.user;
+      state.usuario = action.payload.usuario;
       state.token = action.payload.token;
-    },
-    [signUp.rejected]: (state, action) => {
+    });
+    builder.addCase(signUp.rejected, (state, action) => {
       state.error = action.error.message;
-    },
+    });
   },
 });
 
+export const { setLogout } = authSlice.actions;
 export default authSlice.reducer;

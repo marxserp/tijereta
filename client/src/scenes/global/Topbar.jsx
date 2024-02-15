@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
-import { setLogout } from "../../state";
+import { setLogout } from "../../state/auth.jsx";
 
 import { ColorModeContext, tokens } from "../../theme";
 import { Box, IconButton, Typography, Button, useTheme } from "@mui/material";
@@ -18,11 +18,16 @@ const Topbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const isAuth = Boolean(useSelector((state) => state.token));
+  const isAuth = Boolean(useSelector((state) => state.auth.token));
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
+
+  const handleSubmit = () => {
+    if (isAuth) dispatch(setLogout());
+    navigate("/auth");
+  };
 
   return (
     <Box display="flex" justifyContent="space-between" p="0.6rem">
@@ -46,9 +51,7 @@ const Topbar = () => {
           size="small"
           variant="outlined"
           startIcon={isAuth ? <LogoutOutlinedIcon /> : <LoginIcon />}
-          onClick={
-            isAuth ? () => dispatch(setLogout()) : () => navigate("/auth")
-          }
+          onClick={handleSubmit}
         >
           {isAuth ? `Cerrar sesión` : `Ingresar`}
         </Button>

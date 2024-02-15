@@ -85,7 +85,6 @@ const ListaProcedimientos = ({ setCurrentID }) => {
         onRowClick={(p) => setCurrentID(p.row._id)}
       />
     </Box>
-
   );
 };
 

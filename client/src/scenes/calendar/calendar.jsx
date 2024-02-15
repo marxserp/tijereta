@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTurnos } from "../../state";
+// import { getTurnos } from "../../state";
 
 import {
   Box,

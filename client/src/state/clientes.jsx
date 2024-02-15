@@ -46,7 +46,16 @@ const clientesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAllClientes.fulfilled, (state, action) => {
-      state.clientes = action.payload;
+      return {
+        ...state,
+        clientes: action.payload,
+        status: "succeeded",
+        error: null,
+      };
+    });
+    builder.addCase(createCliente.fulfilled, (state, action) => {
+      // using concat instead of push cause it returns a copy of the original array, thus does not breaks redux inmutability principle
+      state.clientes = state.clientes.concat(action.payload);
     });
   },
 });

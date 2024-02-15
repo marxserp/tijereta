@@ -30,8 +30,12 @@ export const createProcedimiento = createAsyncThunk(
 
 export const updateProcedimiento = createAsyncThunk(
   "procedimientos/updateProcedimiento",
-  async (procedimiento) => {
-    const response = await api.updateProcedimiento(procedimiento);
+  async (id, procedimiento, thunkAPI) => {
+    const response = await api.updateProcedimiento(id, procedimiento);
+    console.log(
+      "Log from procedimientos.jsx>updateProcedimiento",
+      procedimiento
+    );
     return response.data;
   }
 );
@@ -46,7 +50,27 @@ const procedimientosSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAllProcedimientos.fulfilled, (state, action) => {
-      return state = { ...state, procedimientos: action.payload, status: "succeeded", error: null }
+      return {
+        ...state,
+        procedimientos: action.payload,
+        status: "succeeded",
+        error: null,
+      };
+    });
+    builder.addCase(createProcedimiento.fulfilled, (state, action) => {
+      state.procedimientos = state.procedimientos.concat(action.payload);
+    });
+    builder.addCase(updateProcedimiento.fulfilled, (state, action) => {
+      return {
+        ...state,
+        procedimientos: state.procedimientos.map((procedimiento) =>
+          procedimiento._id === action.payload._id
+            ? action.payload
+            : procedimiento
+        ),
+        status: "succeeded",
+        error: null,
+      };
     });
   },
 });

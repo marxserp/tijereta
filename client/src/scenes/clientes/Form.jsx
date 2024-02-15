@@ -4,12 +4,12 @@ import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { useDispatch, useSelector } from "react-redux";
-import { createCliente } from "../../actions/clientes";
+import { createCliente } from "../../state/clientes";
 
 const valueValidation = yup.object().shape({
-  nombre: yup.string(),
+  nombre: yup.string().required("Obligatorio"),
   apellido: yup.string(),
-  correo: yup.string().email("invalid email"),
+  correo: yup.string().required("Obligatorio").email("Correo no válido"),
   contacto: yup.string(),
 });
 const initialValues = {
@@ -19,16 +19,16 @@ const initialValues = {
   contacto: "",
 };
 
-const AdminClientes = ({ currentID, setCurrentID }) => {
+const AdminClientes = () => {
+  // const AdminClientes = ({ currentID, setCurrentID }) => {
+  /* const post = useSelector((state) =>
+    currentID ? state.posts.find((message) => message._id === currentID) : null
+  ); */
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const dispatch = useDispatch();
   const _id = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-
-  /* const post = useSelector((state) =>
-    currentID ? state.posts.find((message) => message._id === currentID) : null
-  ); */
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     const formData = new URLSearchParams(values);
@@ -67,10 +67,10 @@ const AdminClientes = ({ currentID, setCurrentID }) => {
               label="Nombre"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.firstName}
+              value={values.nombre}
               name="nombre"
-              error={!!touched.firstName && !!errors.firstName}
-              helperText={touched.firstName && errors.firstName}
+              error={!!touched.nombre && !!errors.nombre}
+              helperText={touched.nombre && errors.nombre}
               sx={{ gridColumn: "span 2" }}
             />
             <TextField
@@ -80,23 +80,23 @@ const AdminClientes = ({ currentID, setCurrentID }) => {
               label="Apellido"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.lastName}
+              value={values.apellido}
               name="apellido"
-              error={!!touched.lastName && !!errors.lastName}
-              helperText={touched.lastName && errors.lastName}
+              error={!!touched.apellido && !!errors.apellido}
+              helperText={touched.apellido && errors.apellido}
               sx={{ gridColumn: "span 2" }}
             />
             <TextField
               fullWidth
               variant="filled"
               type="text"
-              label="Correo"
+              label="Correo electrónico"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.email}
+              value={values.correo}
               name="correo"
-              error={!!touched.email && !!errors.email}
-              helperText={touched.email && errors.email}
+              error={!!touched.correo && !!errors.correo}
+              helperText={touched.correo && errors.correo}
               sx={{ gridColumn: "span 4" }}
             />
             <TextField
@@ -106,10 +106,10 @@ const AdminClientes = ({ currentID, setCurrentID }) => {
               label="Número de contacto"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.contact}
+              value={values.contacto}
               name="contacto"
-              error={!!touched.contact && !!errors.contact}
-              helperText={touched.contact && errors.contact}
+              error={!!touched.contacto && !!errors.contacto}
+              helperText={touched.contacto && errors.contacto}
               sx={{ gridColumn: "span 4" }}
             />
           </Box>

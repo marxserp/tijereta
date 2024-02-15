@@ -18,8 +18,7 @@ import * as yup from "yup";
 
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLogin } from "../../state";
-import { signIn, signUp } from "../../actions/auth";
+import { logIn, signUp } from "./../../state/auth";
 
 // Restricciones
 const registerSchema = yup.object().shape({
@@ -64,8 +63,18 @@ const Form = () => {
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    if (isLogin) dispatch(signIn(values, navigate));
-    if (isRegister) dispatch(signUp(values, navigate));
+    try {
+      if (isLogin) {
+        await dispatch(logIn(values));
+        navigate("/clientes");
+      }
+      if (isRegister) {
+        await dispatch(signUp(values, navigate));
+        navigate("/clientes");
+      }
+    } catch (error) {
+      console.log(error);
+    }
     onSubmitProps.resetForm();
   };
 

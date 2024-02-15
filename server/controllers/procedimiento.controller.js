@@ -40,18 +40,30 @@ export const getSingleProcedimiento = async (req, res) => {
 };
 
 export const updateProcedimiento = async (req, res) => {
-  const { id } = req.params;
-  const { nombre, descripcion, duracion, precio } = req.body;
+  try {
+    const { id } = req.params;
+    const { nombre, duracion, precio } = req.body;
+    console.log(
+      "Log from procedimiento.controller.js/updateProcedimiento",
+      id,
+      nombre,
+      duracion,
+      precio,
+      req.body
+    );
 
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No hay un procedimiento con ID ${id}.`);
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res.status(404).send(`No hay un procedimiento con ID ${id}.`);
 
-  const updateProcedimiento = { nombre, descripcion, duracion, precio };
-  await procedimientoModel.findByIdAndUpdate(id, updatedProcedimiento, {
-    new: true,
-  });
+    const updatedProcedimiento = { nombre, duracion, precio };
+    await procedimientoModel.findByIdAndUpdate(id, updatedProcedimiento, {
+      new: true,
+    });
 
-  res.json(updatedProcedimiento);
+    res.json(updatedProcedimiento);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // Remover procedimiento (soft delete)
