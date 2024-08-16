@@ -1,26 +1,39 @@
-import { Box } from "@mui/material";
+import { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Box, useTheme } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { useTheme } from "@mui/material";
 
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchAllProcedimientos } from "../../state/procedimientos";
 
-const ListaProcedimientos = ({ setCurrentID }) => {
+const ListaProcedimientos = ({setCurrentID}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
+  
   const dispatch = useDispatch();
   const { procedimientos } = useSelector((state) => state.procedimientos);
-  const isLoading = useSelector((state) => state.isLoading);
-  const token = useSelector((state) => state.token);
+  
+  
+  //const token = useSelector((state) => state.token);
+  /* const isLoading = useSelector((state) => state.isLoading); */
+  // Selected index is saved using ref so as not to cause a re-render
+  //let currentID = useRef(null);
+  // Not the case for formValues, since we need to send it to Form with every change
+  //const [formValues, setFormValues] = useState(null);
+  // We'll try to setFormValues if currentID changes, leaving it null otherwise
+  /* setFormValues(
+    useSelector((state) =>
+      currentID
+    ? state.procedimientos.procedimientos.find((p) => p._id === currentID)
+    : null
+  )
+); */
 
-  useEffect(() => {
-    dispatch(fetchAllProcedimientos());
-  }, []);
+useEffect(() => {
+  dispatch(fetchAllProcedimientos());
+}, []);
 
-  const columns = [
+const columns = [
     {
       field: "nombre",
       headerName: "Nombre",

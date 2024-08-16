@@ -1,28 +1,36 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { getTurnos } from "../../state";
+import { createTurno, updateTurno } from "../../api";
+import { fetchAllClientes } from "../../state/clientes";
+import { fetchAllProcedimientos } from "../../state/procedimientos";
 
 import {
   Box,
+  Button,
+  TextField,
   FormControl,
   List,
   ListItem,
   ListItemText,
   MenuItem,
   Select,
-  TextField,
   Typography,
   useTheme,
+  InputAdornment,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+
+import { Formik, useFormikContext } from "formik";
+import * as yup from "yup";
+
 import FullCalendar, { formatDate } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
-import { Formik } from "formik";
-import * as yup from "yup";
 import dayjs from "dayjs";
+
 import { tokens } from "../../theme";
 
 import Header from "../../components/Header";
@@ -35,6 +43,14 @@ const Calendar = () => {
   const dispatch = useDispatch();
   const turnos = useSelector((state) => state.turnos);
   const token = useSelector((state) => state.token);
+  const { procedimientos } = useSelector((state) => state.procedimientos);
+  console.log(procedimientos);
+  const { clientes } = useSelector((state) => state.clientes);
+
+  useEffect(() => {
+    dispatch(fetchAllClientes());
+    dispatch(fetchAllProcedimientos());
+  }, []);
 
   /* const getTurnos = async () => {
     try {
@@ -79,11 +95,31 @@ const Calendar = () => {
     getTurnos();
   }, []); */
 
+  const valueValidation = yup.object().shape({
+    fecha: yup.date().required(),
+    id_cliente: yup.string().required(),
+    id_procedimiento: yup.string().required(),
+    detalle: yup.string().required(),
+    sena: yup.number().required(),
+    observacion: yup.string(),
+    estado: yup.number().required(),
+    extra: yup.number().required()
+  });
+  const initialValues = {
+    fecha: dayjs(),
+    id_cliente: "",
+    id_procedimiento: "",
+    detalle: "",
+    sena: 0,
+    observacion: "",
+    estado: 1,
+    extra: 1,
+  };
+
   const handleDateClick = (selected) => {
     const title = prompt("Ingresar título del nuevo evento");
     const calendarApi = selected.view.calendar;
     calendarApi.unselect();
-
     if (title) {
       calendarApi.addEvent({
         id: `${selected.dateStr}-${title}`,
@@ -101,6 +137,10 @@ const Calendar = () => {
     }
   };
 
+  const handleFormSubmit = () => {
+    // Do sometinhg
+  }
+
   return (
     <Box m="20px">
       <Header
@@ -116,37 +156,7 @@ const Calendar = () => {
           p="15px"
           borderRadius="4px"
         >
-          <Box display="flex" columnGap="8px" rowGap="8px">
-            <Formik></Formik>
-            <FormControl fullWidth>
-              <DatePicker defaultValue={dayjs("2022-04-17")} />
-              <Select value="Procedimiento nombre" name="Procediminento">
-                <MenuItem value="Proc1">
-                  <Typography>Proc1</Typography>
-                </MenuItem>
-                <MenuItem value="Proc2">
-                  <Typography>Proc2</Typography>
-                </MenuItem>
-              </Select>
 
-              <Select value="Procedimiento nombre2" name="Procediminento Adic">
-                <MenuItem value="Proc1">
-                  <Typography>Proc1</Typography>
-                </MenuItem>
-                <MenuItem value="Proc2">
-                  <Typography>Proc2</Typography>
-                </MenuItem>
-              </Select>
-              {/* CLIENT PICKER */}
-              <TextField
-                fullWidth
-                variant="outlined"
-                type="text"
-                label="Nombre"
-                name="nombre"
-              />
-            </FormControl>
-          </Box>
           <Typography variant="h5" mt="20px">
             Próximos
           </Typography>
@@ -175,6 +185,104 @@ const Calendar = () => {
               </ListItem>
             ))}
           </List>
+        </Box>
+
+        <Box
+        display="grid"
+        gap="12px">
+          <Formik
+            onSubmit={handleFormSubmit}
+            initialValues={initialValues}
+            validationSchema={valueValidation}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleBlur,
+              handleChange,
+              handleSubmit,
+              resetForm,
+            }) => (<form>
+              <DatePicker defaultValue={dayjs()} />
+
+              <Select name="Procediminento" value="Procedimiento nombre" sx={{ gridColumn: "span 4" }}>
+                {procedimientos.map((procedimiento) => (
+                  <MenuItem value={procedimiento._id}>
+                    <Typography>{procedimiento.nombre}</Typography>
+                  </MenuItem>
+                ))}
+              </Select>
+
+              <TextField
+                fullWidth
+                variant="filled"
+                type="number"
+                label="Seña"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.sena}
+                name="sena"
+                error={!!touched.sena && !!errors.sena}
+                helperText={touched.sena && errors.sena}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                }}
+                sx={{ gridColumn: "span 2" }}
+              />
+
+              <Select name="Cliente" value="Cliente" sx={{ gridColumn: "span 4" }}>
+                {clientes.map((cliente) => (
+                  <MenuItem value={cliente._id}>
+                    <Typography>{cliente.nombre}</Typography>
+                  </MenuItem>
+                ))}
+              </Select>
+
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Detalles"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.detalle}
+                name="detalle"
+                error={!!touched.detalle && !!errors.detalle}
+                helperText={touched.detalle && errors.detalle}
+                sx={{ gridColumn: "span 4" }}
+              />
+
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Observaciones"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.observacion}
+                name="observacion"
+                error={!!touched.observacion && !!errors.observacion}
+                helperText={touched.observacion && errors.observacion}
+                sx={{ gridColumn: "span 4" }}
+              />
+
+              <Typography>Estado placeholder</Typography>
+              <Typography>Extra placeholder</Typography>
+
+              <Box display="flex" justifyContent="end" mt="20px" columnGap="6px">
+                <Button variant="text" onClick={resetForm}>
+                  Limpiar todo
+                </Button>
+                <Button type="submit" color="secondary" variant="contained">
+                  Guardar
+                </Button>
+              </Box>
+
+            </form>)}
+          </Formik>
         </Box>
 
         {/* CALENDAR */}

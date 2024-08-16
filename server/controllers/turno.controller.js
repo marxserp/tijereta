@@ -4,18 +4,24 @@ import turnoModel from "../models/turno.model.js";
 
 export const createTurno = async (req, res) => {
   const {
+    fecha,
     id_cliente,
     id_procedimiento,
-    id_procedimientoAdicional,
-    fecha,
     detalle,
+    sena,
+    observacion,
+    estado,
+    extra,
   } = req.body;
   const newCliente = new {
+    fecha,
     id_cliente,
     id_procedimiento,
-    id_procedimientoAdicional,
-    fecha,
     detalle,
+    sena,
+    observacion,
+    estado,
+    extra,
   }();
 };
 
@@ -41,24 +47,28 @@ export const getSingleTurno = async (req, res) => {
 export const updateTurno = async (req, res) => {
   const { id } = req.params;
   const {
+    fecha,
     id_cliente,
     id_procedimiento,
-    id_procedimientoAdicional,
-    fecha,
     detalle,
+    sena,
+    observacion,
     estado,
+    extra,
   } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No se encontró turno con ID ${id}.`);
 
   const updatedTurno = {
+    fecha,
     id_cliente,
     id_procedimiento,
-    id_procedimientoAdicional,
-    fecha,
     detalle,
+    sena,
+    observacion,
     estado,
+    extra,
   };
   await turnoModel.findByIdAndUpdate(id, updatedTurno, { new: true });
 

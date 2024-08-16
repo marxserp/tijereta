@@ -20,10 +20,7 @@ const Procedimientos = () => {
         <Header title="Procedimientos" subtitle={currentID} />
         <Box position="relative" display="flex" justifyContent="space-around">
           <Box flexBasis="30%">
-            <AdminProcedimientos
-              currentID={currentID}
-              setCurrentID={setCurrentID}
-            />
+            <AdminProcedimientos currentID={currentID} setCurrentID={setCurrentID} />
           </Box>
           <Box flexBasis="60%">
             <ListaProcedimientos setCurrentID={setCurrentID} />

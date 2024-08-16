@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const turnoSchema = mongoose.Schema(
   {
+    fecha: { type: Date, required: true },
     cliente: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Cliente",
@@ -10,15 +11,12 @@ const turnoSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Procedimiento",
     },
-    procedimientoAdicional: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Procedimiento",
-    },
-    fecha: { type: Date, required: true },
+    sena: { type: Number, default: 1 },
     detalle: { type: String, required: true },
     observacion: { type: String, required: true },
+    estado: { type: Number, default: 1 },
+    extra: { type: Boolean, default: 1 },
     usuario: { type: String, required: true },
-    estado: { type: Boolean, default: 1 },
   },
   { timestamps: true }
 );

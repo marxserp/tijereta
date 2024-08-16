@@ -75,4 +75,9 @@ const procedimientosSlice = createSlice({
   },
 });
 
+// TEST
+export const selectClienteById = (state, clienteID) => {
+  state.clientes.find((cliente) => cliente._id === clienteID);
+};
+
 export default procedimientosSlice.reducer;

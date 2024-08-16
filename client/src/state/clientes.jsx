@@ -30,8 +30,8 @@ export const createCliente = createAsyncThunk(
 
 export const updateCliente = createAsyncThunk(
   "clientes/updateCliente",
-  async (cliente) => {
-    const response = await api.updateCliente(cliente);
+  async (id, cliente) => {
+    const response = await api.updateCliente(id, cliente);
     return response.data;
   }
 );
@@ -60,4 +60,8 @@ const clientesSlice = createSlice({
   },
 });
 
+// TEST
+export const selectClienteById = (state, clienteID) => {
+  state.clientes.find((cliente) => cliente._id === clienteID);
+};
 export default clientesSlice.reducer;

@@ -1,11 +1,14 @@
-import { Box, Button, TextField } from "@mui/material";
-import { Formik } from "formik";
-import * as yup from "yup";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createCliente } from "../../state/clientes";
+import { selectClienteById } from "../../state/clientes";
+import { createCliente, updateCliente } from "../../api";
 
+import { Box, Button, TextField } from "@mui/material";
+import { Formik, useFormikContext } from "formik";
+import * as yup from "yup";
+import useMediaQuery from "@mui/material/useMediaQuery"
+;
 const valueValidation = yup.object().shape({
   nombre: yup.string().required("Obligatorio"),
   apellido: yup.string(),
@@ -19,21 +22,40 @@ const initialValues = {
   contacto: "",
 };
 
-const AdminClientes = () => {
-  // const AdminClientes = ({ currentID, setCurrentID }) => {
-  /* const post = useSelector((state) =>
-    currentID ? state.posts.find((message) => message._id === currentID) : null
-  ); */
-  const isNonMobile = useMediaQuery("(min-width:600px)");
+const FormObserver = ({cliente}) => {
+  const {setValues} = useFormikContext();
+  useEffect(()=> {
+    if (cliente) {
+      setValues({
+        nombre: cliente.nombre,
+        apellido: cliente.apellido,
+        correo: cliente.correo,
+        contacto: cliente.contacto,
+      });
+  }
+}, [cliente, setValues]);
+  return null
+};
 
+const AdminClientes = ({currentID, setCurrentID}) => {
+const isNonMobile = useMediaQuery("(min-width:600px)");
+  
   const dispatch = useDispatch();
-  const _id = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
+  const _id = useSelector((state) => state.auth.usuario._id);
+  // const cliente = useSelector((state) => selectClienteById(state, currentID));
+  const token = useSelector((state) => state.auth.token);
+  const cliente = useSelector((state) =>
+    currentID ? state.clientes.clientes.find((cliente) => cliente._id === currentID) : null
+  );
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     const formData = new URLSearchParams(values);
     formData.append("usuario", _id);
-    dispatch(createCliente(formData));
+    if (currentID === 0 || currentID === null) {
+      dispatch(createCliente(formData));
+    } else {
+      dispatch(updateCliente(currentID, formData));
+    }
   };
 
   return (
@@ -121,6 +143,7 @@ const AdminClientes = () => {
               Guardar
             </Button>
           </Box>
+          <FormObserver cliente={cliente}/>
         </form>
       )}
     </Formik>
