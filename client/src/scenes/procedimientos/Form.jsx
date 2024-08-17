@@ -5,6 +5,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { useDispatch, useSelector } from "react-redux";
 import { createProcedimiento } from "../../actions/procedimientos";
+import { useEffect } from "react";
 
 const valueValidation = yup.object().shape({
   nombre: yup.string().required("Obligatorio"),
@@ -18,7 +19,7 @@ const initialValues = {
   duracion: "",
 };
 
-const AdminProcedimientos = () => {
+const AdminProcedimientos = ({currentID, setCurrentID}) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const dispatch = useDispatch();
@@ -30,6 +31,8 @@ const AdminProcedimientos = () => {
     formData.append("usuario", _id);
     dispatch(createProcedimiento(formData));
   };
+
+  useEffect(() => {}, [])
 
   return (
     <div>
