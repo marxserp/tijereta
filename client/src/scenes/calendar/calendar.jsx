@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createTurno, updateTurno } from "../../api";
 import { fetchAllClientes } from "../../state/clientes";
@@ -44,8 +44,10 @@ const Calendar = () => {
   const turnos = useSelector((state) => state.turnos);
   const token = useSelector((state) => state.token);
   const { procedimientos } = useSelector((state) => state.procedimientos);
-  console.log(procedimientos);
   const { clientes } = useSelector((state) => state.clientes);
+  //const [filtroProc, setFiltroProc] = useState("");
+  //const [filtroCli, setFiltroCli] = useState("");
+  //const cliFiltrados = useMemo(() => procedimientos.filter((proc) => proc.startsWith(filtroProc), [filtroProc]));
 
   useEffect(() => {
     dispatch(fetchAllClientes());
@@ -231,6 +233,20 @@ const Calendar = () => {
                   ),
                 }}
                 sx={{ gridColumn: "span 2" }}
+              />
+
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Detalles"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.detalle}
+                name="detalle"
+                error={!!touched.detalle && !!errors.detalle}
+                helperText={touched.detalle && errors.detalle}
+                sx={{ gridColumn: "span 4" }}
               />
 
               <Select name="Cliente" value="Cliente" sx={{ gridColumn: "span 4" }}>
