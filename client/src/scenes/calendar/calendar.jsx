@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createTurno, updateTurno } from "../../api";
 import { fetchAllClientes } from "../../state/clientes";
 import { fetchAllProcedimientos } from "../../state/procedimientos";
+import { fetchAllTurnos } from "../../state/turnos";
 
 import {
   Box,
@@ -44,8 +45,13 @@ const Calendar = () => {
   const turnos = useSelector((state) => state.turnos);
   const token = useSelector((state) => state.token);
   const { procedimientos } = useSelector((state) => state.procedimientos);
-  console.log(procedimientos);
   const { clientes } = useSelector((state) => state.clientes);
+  const turno = useSelector((state) =>
+    currentID ? state.turnos.turnos.find((turno) => turno._id === currentID) : null
+);
+  const [selectedProcedimientoId, setSelectedProcedimientoId] = useState("");
+  const [selectedClienteId, setSelectedClienteId] = useState("");
+  const [dateValue, setDateValue] = useState(dayjs());
 
   useEffect(() => {
     dispatch(fetchAllClientes());
@@ -105,6 +111,7 @@ const Calendar = () => {
     estado: yup.number().required(),
     extra: yup.number().required()
   });
+
   const initialValues = {
     fecha: dayjs(),
     id_cliente: "",
@@ -115,7 +122,7 @@ const Calendar = () => {
     estado: 1,
     extra: 1,
   };
-
+  
   const handleDateClick = (selected) => {
     const title = prompt("Ingresar título del nuevo evento");
     const calendarApi = selected.view.calendar;
@@ -130,17 +137,31 @@ const Calendar = () => {
       });
     }
   };
-
+  
   const handleEventClick = (selected) => {
     if (window.confirm(`¿Eliminar evento? '${selected.event.title}'`)) {
       selected.event.remove();
     }
   };
-
-  const handleFormSubmit = () => {
-    // Do sometinhg
+  
+  const handleFormSubmit = async (values, onSubmitProps) => {  
+    const formData = new URLSearchParams(values);
+    if (currentID === 0 || currentID === null) {
+      dispatch(createTurno(formData));
+    } else {
+      dispatch(updateTurno(currentID, formData));
+    }
+    // clearForm();
   }
 
+  const handleProcedimientoSelectChange = (event) => {
+    setSelectedProcedimientoId(event.target.value);
+  }
+
+  const handleClienteSelectChange = (event) => {
+    setSelectedClienteId(event.target.value);
+  }
+  
   return (
     <Box m="20px">
       <Header
@@ -204,10 +225,11 @@ const Calendar = () => {
               handleSubmit,
               resetForm,
             }) => (<form>
-              <DatePicker defaultValue={dayjs()} />
+              <DatePicker value={dateValue} onChange={(e) => setDateValue(e)} defaultValue={dayjs()} />
 
-              <Select name="Procediminento" value="Procedimiento nombre" sx={{ gridColumn: "span 4" }}>
+              <Select name="Procediminento" value="Procedimiento nombre" sx={{ gridColumn: "span 4" }} onChange={handleProcedimientoSelectChange} label="Elegir producto">
                 {procedimientos.map((procedimiento) => (
+                  // Selección procedimientos con estado controlado. Cada cambio actualiza el estado; valor estado se envía en formData
                   <MenuItem value={procedimiento._id}>
                     <Typography>{procedimiento.nombre}</Typography>
                   </MenuItem>
@@ -233,7 +255,7 @@ const Calendar = () => {
                 sx={{ gridColumn: "span 2" }}
               />
 
-              <Select name="Cliente" value="Cliente" sx={{ gridColumn: "span 4" }}>
+              <Select name="Cliente" value="Cliente" sx={{ gridColumn: "span 4" }} onChange={handleClienteSelectChange} label="Elegir cliente">
                 {clientes.map((cliente) => (
                   <MenuItem value={cliente._id}>
                     <Typography>{cliente.nombre}</Typography>
