@@ -11,6 +11,7 @@ import AdminTurnos from "./Form";
 
 const Agenda = () => {
   const [turnoId, setTurnoId] = useState(0);
+  const [currentID, setCurrentID] = useState(0);
 
   return (
     <Box position="relative" display="flex" justifyContent="center">
@@ -27,10 +28,10 @@ const Agenda = () => {
           justifyContent="space-between"
         >
           <Box flexBasis="38%" mr="2rem">
-            <AdminTurnos turno={turnoId} />
+            <AdminTurnos currentID={currentID} setCurrentID={setCurrentID} turno={turnoId} />
           </Box>
           <Box flexBasis="60%">
-            <SideContent />
+            <SideContent setCurrentID={setCurrentID} />
           </Box>
         </Box>
       </Box>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createTurno, updateTurno } from "../../api";
 import { fetchAllClientes } from "../../state/clientes";
@@ -46,12 +46,19 @@ const Calendar = () => {
   const token = useSelector((state) => state.token);
   const { procedimientos } = useSelector((state) => state.procedimientos);
   const { clientes } = useSelector((state) => state.clientes);
+  
+  /*
+  const [filtroProc, setFiltroProc] = useState("");
+  const [filtroCli, setFiltroCli] = useState("");
+  const cliFiltrados = useMemo(() => procedimientos.filter((proc) => proc.startsWith(filtroProc), [filtroProc]));
+  const [selectedProcID, setSelectedProcID] = useState("");
+  const [selectedClienID, setSelectedClienID] = useState("");
+  const [selectedDateValue, setSelectedDateValue] = useState(dayjs());
+
   const turno = useSelector((state) =>
     currentID ? state.turnos.turnos.find((turno) => turno._id === currentID) : null
-);
-  const [selectedProcedimientoId, setSelectedProcedimientoId] = useState("");
-  const [selectedClienteId, setSelectedClienteId] = useState("");
-  const [dateValue, setDateValue] = useState(dayjs());
+  );
+  */
 
   useEffect(() => {
     dispatch(fetchAllClientes());
@@ -76,9 +83,9 @@ const Calendar = () => {
     } catch (error) {
       console.log("Error al cargar turnos: ", error);
     }
-  }; */
+  };
 
-  /* const eliminarTurno = async (values, onSubmitProps) => {
+  const eliminarTurno = async (values, onSubmitProps) => {
     const formData = URLSearchParams(values);
     try {
       const response = await fetch("http://localhost:8080/turnos", {
@@ -94,12 +101,12 @@ const Calendar = () => {
     } catch (error) {
       console.log("Error al eliminar turno: ", error);
     }
-  }; */
+  };
 
-  /* useEffect(() => {
+  useEffect(() => {
     dispatch(setTurnos({ turnos: [] }));
     getTurnos();
-  }, []); */
+  }, []);
 
   const valueValidation = yup.object().shape({
     fecha: yup.date().required(),
@@ -121,8 +128,8 @@ const Calendar = () => {
     observacion: "",
     estado: 1,
     extra: 1,
-  };
-  
+  };*/
+
   const handleDateClick = (selected) => {
     const title = prompt("Ingresar título del nuevo evento");
     const calendarApi = selected.view.calendar;
@@ -143,25 +150,18 @@ const Calendar = () => {
       selected.event.remove();
     }
   };
-  
-  const handleFormSubmit = async (values, onSubmitProps) => {  
+
+  /*const handleFormSubmit = async (values, onSubmitProps) => {
     const formData = new URLSearchParams(values);
+    formData.append("usuario", _id);
     if (currentID === 0 || currentID === null) {
       dispatch(createTurno(formData));
     } else {
       dispatch(updateTurno(currentID, formData));
     }
-    // clearForm();
-  }
 
-  const handleProcedimientoSelectChange = (event) => {
-    setSelectedProcedimientoId(event.target.value);
-  }
+  }*/
 
-  const handleClienteSelectChange = (event) => {
-    setSelectedClienteId(event.target.value);
-  }
-  
   return (
     <Box m="20px">
       <Header
@@ -177,7 +177,6 @@ const Calendar = () => {
           p="15px"
           borderRadius="4px"
         >
-
           <Typography variant="h5" mt="20px">
             Próximos
           </Typography>
@@ -206,105 +205,6 @@ const Calendar = () => {
               </ListItem>
             ))}
           </List>
-        </Box>
-
-        <Box
-        display="grid"
-        gap="12px">
-          <Formik
-            onSubmit={handleFormSubmit}
-            initialValues={initialValues}
-            validationSchema={valueValidation}
-          >
-            {({
-              values,
-              errors,
-              touched,
-              handleBlur,
-              handleChange,
-              handleSubmit,
-              resetForm,
-            }) => (<form>
-              <DatePicker value={dateValue} onChange={(e) => setDateValue(e)} defaultValue={dayjs()} />
-
-              <Select name="Procediminento" value="Procedimiento nombre" sx={{ gridColumn: "span 4" }} onChange={handleProcedimientoSelectChange} label="Elegir producto">
-                {procedimientos.map((procedimiento) => (
-                  // Selección procedimientos con estado controlado. Cada cambio actualiza el estado; valor estado se envía en formData
-                  <MenuItem value={procedimiento._id}>
-                    <Typography>{procedimiento.nombre}</Typography>
-                  </MenuItem>
-                ))}
-              </Select>
-
-              <TextField
-                fullWidth
-                variant="filled"
-                type="number"
-                label="Seña"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.sena}
-                name="sena"
-                error={!!touched.sena && !!errors.sena}
-                helperText={touched.sena && errors.sena}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">$</InputAdornment>
-                  ),
-                }}
-                sx={{ gridColumn: "span 2" }}
-              />
-
-              <Select name="Cliente" value="Cliente" sx={{ gridColumn: "span 4" }} onChange={handleClienteSelectChange} label="Elegir cliente">
-                {clientes.map((cliente) => (
-                  <MenuItem value={cliente._id}>
-                    <Typography>{cliente.nombre}</Typography>
-                  </MenuItem>
-                ))}
-              </Select>
-
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Detalles"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.detalle}
-                name="detalle"
-                error={!!touched.detalle && !!errors.detalle}
-                helperText={touched.detalle && errors.detalle}
-                sx={{ gridColumn: "span 4" }}
-              />
-
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Observaciones"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.observacion}
-                name="observacion"
-                error={!!touched.observacion && !!errors.observacion}
-                helperText={touched.observacion && errors.observacion}
-                sx={{ gridColumn: "span 4" }}
-              />
-
-              <Typography>Estado placeholder</Typography>
-              <Typography>Extra placeholder</Typography>
-
-              <Box display="flex" justifyContent="end" mt="20px" columnGap="6px">
-                <Button variant="text" onClick={resetForm}>
-                  Limpiar todo
-                </Button>
-                <Button type="submit" color="secondary" variant="contained">
-                  Guardar
-                </Button>
-              </Box>
-
-            </form>)}
-          </Formik>
         </Box>
 
         {/* CALENDAR */}
