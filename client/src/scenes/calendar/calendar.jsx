@@ -48,6 +48,9 @@ const Calendar = () => {
   //const [filtroProc, setFiltroProc] = useState("");
   //const [filtroCli, setFiltroCli] = useState("");
   //const cliFiltrados = useMemo(() => procedimientos.filter((proc) => proc.startsWith(filtroProc), [filtroProc]));
+  const [selectedProcID, setSelectedProcID] = useState("");
+  const [selectedClienID, setSelectedClienID] = useState("");
+  const [selectedDateValue, setSelectedDateValue] = useState(dayjs());
 
   useEffect(() => {
     dispatch(fetchAllClientes());
@@ -158,7 +161,6 @@ const Calendar = () => {
           p="15px"
           borderRadius="4px"
         >
-
           <Typography variant="h5" mt="20px">
             Próximos
           </Typography>
@@ -206,9 +208,15 @@ const Calendar = () => {
               handleSubmit,
               resetForm,
             }) => (<form>
-              <DatePicker defaultValue={dayjs()} />
+              
+              <DatePicker value={selectedDateValue} onChange={(e) => setSelectedDateValue(e)} defaultValue={dayjs()} />
 
-              <Select name="Procediminento" value="Procedimiento nombre" sx={{ gridColumn: "span 4" }}>
+              <Select
+                name="Procediminento"
+                value={selectedProcID}
+                label="Elegí un producto"
+                onChange={(e) => setSelectedProcID(e)}
+                sx={{ gridColumn: "span 4" }}>
                 {procedimientos.map((procedimiento) => (
                   <MenuItem value={procedimiento._id}>
                     <Typography>{procedimiento.nombre}</Typography>
@@ -249,7 +257,11 @@ const Calendar = () => {
                 sx={{ gridColumn: "span 4" }}
               />
 
-              <Select name="Cliente" value="Cliente" sx={{ gridColumn: "span 4" }}>
+              <Select
+                name="Cliente"
+                value={selectedClienID}
+                onChange={(e) => setSelectedClienID(e)}
+                sx={{ gridColumn: "span 4" }}>
                 {clientes.map((cliente) => (
                   <MenuItem value={cliente._id}>
                     <Typography>{cliente.nombre}</Typography>

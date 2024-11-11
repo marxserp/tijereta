@@ -13,6 +13,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 // import authReducer from "./index";
 import clientesReducer from "./clientes.jsx";
 import procedimientosReducer from "./procedimientos.jsx";
+import turnosReducer from "./turnos.jsx";
 import configuracionesReducer from "./configuraciones.jsx";
 import authReducer from "./auth.jsx";
 
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   clientes: clientesReducer,
   procedimientos: procedimientosReducer,
+  turnos: turnosReducer,
   configuraciones: configuracionesReducer,
 });
 
