@@ -6,7 +6,7 @@ import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "./scenes/global/Topbar";
 import Login from "./scenes/login";
-import Calendar from "./scenes/calendar/calendar";
+import Calendar from "./scenes/calendar";
 import Clientes from "./scenes/clientes";
 import FAQ from "./scenes/faq";
 import Procedimientos from "./scenes/procedimientos";

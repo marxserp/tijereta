@@ -1,28 +1,35 @@
-import express from "express";
 import mongoose from "mongoose";
 import turnoModel from "../models/turno.model.js";
 
 export const createTurno = async (req, res) => {
-  const {
-    fecha,
-    id_cliente,
-    id_procedimiento,
-    detalle,
-    sena,
-    observacion,
-    estado,
-    extra,
-  } = req.body;
-  const newCliente = new {
-    fecha,
-    id_cliente,
-    id_procedimiento,
-    detalle,
-    sena,
-    observacion,
-    estado,
-    extra,
-  }();
+  try {
+    const {
+      fecha,
+      id_cliente,
+      id_procedimiento,
+      detalle,
+      sena,
+      observacion,
+      estado,
+      extra,
+      usuario
+    } = req.body;
+    const newTurno = new turnoModel({
+      fecha,
+      id_cliente,
+      id_procedimiento,
+      detalle,
+      sena,
+      observacion,
+      estado,
+      extra,
+      usuario
+    });
+    await newTurno.save();
+    res.status(201).json(newTurno)
+  } catch (error) {
+    res.status(500).json({message: `Error de controlador al registrar un turno: ${error.message}`,});
+  }
 };
 
 export const getAllTurnos = async (req, res) => {
@@ -69,6 +76,7 @@ export const updateTurno = async (req, res) => {
     observacion,
     estado,
     extra,
+    _id: id,
   };
   await turnoModel.findByIdAndUpdate(id, updatedTurno, { new: true });
 

@@ -11,7 +11,7 @@ import {
 const router = express.Router();
 
 router.route("/").post(createTurno);
-router.route("/").post(getAllTurnos);
+router.route("/").get(getAllTurnos);
 router.route("/:id").get(getSingleTurno);
 router.route("/:id").patch(updateTurno);
 router.route("/:id").patch(deleteTurno);

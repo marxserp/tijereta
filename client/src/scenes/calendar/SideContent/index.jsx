@@ -9,6 +9,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { formatDate } from "@fullcalendar/react";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { tokens } from "../../../theme";
@@ -16,7 +17,7 @@ import { tokens } from "../../../theme";
 const SideContent = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  // const [currentEvents, setCurrentEvents] = useState([]);
+  const [currentEvents, setCurrentEvents] = useState([]);
 
   return (
     <Box
