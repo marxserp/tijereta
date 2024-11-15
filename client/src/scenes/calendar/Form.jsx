@@ -1,23 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setTurnos } from "../../state/turnos";
 import { createTurno, updateTurno } from "../../api";
+import { isEqual } from 'lodash';
 
-import { Formik } from "formik";
+import { Formik, useFormikContext } from "formik";
 import * as yup from "yup";
 import {
   Box,
   Button,
   FormControl,
-  List,
-  ListItem,
-  ListItemText,
   MenuItem,
   Select,
   InputLabel,
   TextField,
   Typography,
-  useTheme,
   InputAdornment,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery"
@@ -25,14 +22,9 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
 const valueValidation = yup.object().shape({
-  fecha: yup.date().required(),
-  id_cliente: yup.string().required(),
-  id_procedimiento: yup.string().required(),
   detalle: yup.string().required(),
   sena: yup.number().required(),
   observacion: yup.string(),
-  estado: yup.number().required(),
-  extra: yup.number().required()
 });
 
 const initialValues = {
@@ -46,6 +38,28 @@ const initialValues = {
   extra: 1,
 };
 
+const FormObserver = ({ turno }) => {
+  const { setValues } = useFormikContext();
+  const [previousTurno, setPreviousTurno] = useState(null);
+  useEffect(() => {
+    console.log("before setting values", turno);
+    // Solo setea valores de Form si turno está definido Y es diferente a previousTurno
+    if (turno && (turno && (!previousTurno || !isEqual(turno, previousTurno)))) {
+      setValues({
+        detalle: turno.detalle,
+        sena: turno.sena,
+        observacion: turno.observacion,
+      });
+      // Seguimiento de turno actual para evitar que se ejecute nuevamente
+      setPreviousTurno(turno);
+      console.log("after setting values", turno);
+    }
+    // Solo revisa turno y setValues para evitar bucle infinito
+  }, [turno, setValues]);
+
+  return null;
+};
+
 const AdminTurnos = ({ currentID, setCurrentID }) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const dispatch = useDispatch();
@@ -57,35 +71,40 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
   );
   const { procedimientos } = useSelector((state) => state.procedimientos);
   const { clientes } = useSelector((state) => state.clientes);
+
+  // Estado local que guarda id/fecha de elemento/fecha seleccionado
   const [selectedProcID, setSelectedProcID] = useState("");
   const [selectedClienID, setSelectedClienID] = useState("");
   const [selectedDateValue, setSelectedDateValue] = useState(dayjs().format('DD-MM-YYYY'));
 
+  useEffect(() => {
+    if (turno !== 0 && turno !== null) {
+      console.log("Setting cliente and procedimiento IDs, logging turno.fecha: ", turno.fecha)
+      setSelectedDateValue(dayjs(turno.fecha).format('DD-MM-YYYY'));
+      setSelectedClienID(turno.cliente);
+      setSelectedProcID(turno.procedimiento);
+    }
+  }, [turno]);
+
   const handleFormSubmit = async (values, onSubmitProps) => {
-    console.log("Log1 from handleFromSubmit", values);
     const formData = new URLSearchParams(values);
     formData.append("usuario", _id);
-    console.log("Log2 from handleFromSubmit", formData);
-    dispatch(createTurno(formData));
-
-    /*if (currentID === 0 || currentID === null) {
+    if (currentID === 0 || currentID === null) {
       dispatch(createTurno(formData));
     } else {
       dispatch(updateTurno(currentID, formData));
-    }*/
+    };
   }
 
   return (
     <Formik
       onSubmit={handleFormSubmit}
       initialValues={initialValues}
-      validationSchema={valueValidation}
     >
       {({
         values,
         errors,
         touched,
-        handleBlur,
         handleChange,
         handleSubmit,
         resetForm,
@@ -104,7 +123,7 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
               name="fecha"
               label="Elegí una fecha"
               value={selectedDateValue}
-              onChange={(e) => setFieldValue("fecha", e ? dayjs(e).toDate() : '')}
+              onChange={(e) => setSelectedDateValue("fecha", e ? dayjs(e).toDate() : '')}
               defaultValue={dayjs().format('DD-MM-YYYY')}
               sx={{ gridColumn: "span 2" }}
             />
@@ -114,7 +133,7 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
                 name="id_cliente"
                 value={selectedClienID}
                 label="Elegí un cliente"
-                onChange={(e) => setFieldValue("id_cliente", e.target.value)}>
+                onChange={(e) => setSelectedClienID("id_cliente", e.target.value)}>
                 {clientes.map((cliente) => (
                   <MenuItem value={cliente._id}>
                     <Typography>{cliente.nombre}</Typography>
@@ -130,7 +149,7 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
                 name="id_procedimiento"
                 value={selectedProcID}
                 label="Elegí un producto"
-                onChange={(e) => setFieldValue("id_procedimiento", e.target.value)}
+                onChange={(e) => setSelectedProcID("id_procedimiento", e.target.value)}
                 sx={{ gridColumn: "span 4" }}>
                 {procedimientos.map((procedimiento) => (
                   <MenuItem value={procedimiento._id}>
@@ -145,7 +164,7 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
               variant="filled"
               type="number"
               label="Seña"
-              onBlur={handleBlur}
+              
               onChange={handleChange}
               value={values.sena}
               name="sena"
@@ -164,7 +183,7 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
               variant="filled"
               type="text"
               label="Detalles"
-              onBlur={handleBlur}
+              
               onChange={handleChange}
               value={values.detalle}
               name="detalle"
@@ -178,7 +197,7 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
               variant="filled"
               type="text"
               label="Observaciones"
-              onBlur={handleBlur}
+              
               onChange={handleChange}
               value={values.observacion}
               name="observacion"
@@ -194,13 +213,14 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
 
           </Box>
           <Box display="flex" justifyContent="end" mt="20px" columnGap="6px">
-            <Button variant="text" onClick={resetForm}>
+            <Button variant="text" onClick={() => { resetForm(); setCurrentID(0); }}>
               Limpiar todo
             </Button>
             <Button type="submit" color="secondary" variant="contained">
               Guardar
             </Button>
           </Box>
+          <FormObserver turno={turno} />
         </form>
       )}
     </Formik>

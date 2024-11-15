@@ -3,14 +3,8 @@ import mongoose from "mongoose";
 const turnoSchema = mongoose.Schema(
   {
     fecha: { type: Date, required: true },
-    cliente: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Cliente",
-    },
-    procedimiento: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Procedimiento",
-    },
+    id_cliente: { type: String, required: true },
+    id_procedimiento: { type: String, required: true },
     detalle: { type: String, required: true },
     sena: { type: Number, default: 1 },
     observacion: { type: String, required: true },

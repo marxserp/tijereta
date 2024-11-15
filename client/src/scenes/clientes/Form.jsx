@@ -8,7 +8,7 @@ import { Box, Button, TextField } from "@mui/material";
 import { Formik, useFormikContext } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery"
-;
+  ;
 const valueValidation = yup.object().shape({
   nombre: yup.string().required("Obligatorio"),
   apellido: yup.string(),
@@ -22,9 +22,9 @@ const initialValues = {
   contacto: "",
 };
 
-const FormObserver = ({cliente}) => {
-  const {setValues} = useFormikContext();
-  useEffect(()=> {
+const FormObserver = ({ cliente }) => {
+  const { setValues } = useFormikContext();
+  useEffect(() => {
     if (cliente) {
       setValues({
         nombre: cliente.nombre,
@@ -32,15 +32,15 @@ const FormObserver = ({cliente}) => {
         correo: cliente.correo,
         contacto: cliente.contacto,
       });
-  }
-}, [cliente, setValues]);
-  return null
+    }
+  }, [cliente, setValues]);
+  return null;
 };
 
-const AdminClientes = ({currentID, setCurrentID}) => {
-const isNonMobile = useMediaQuery("(min-width:600px)");
-  
+const AdminClientes = ({ currentID, setCurrentID }) => {
+  const isNonMobile = useMediaQuery("(min-width:600px)");
   const dispatch = useDispatch();
+
   const _id = useSelector((state) => state.auth.usuario._id);
   // const cliente = useSelector((state) => selectClienteById(state, currentID));
   const token = useSelector((state) => state.auth.token);
@@ -143,7 +143,7 @@ const isNonMobile = useMediaQuery("(min-width:600px)");
               Guardar
             </Button>
           </Box>
-          <FormObserver cliente={cliente}/>
+          <FormObserver cliente={cliente} />
         </form>
       )}
     </Formik>

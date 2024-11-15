@@ -27,13 +27,16 @@ import listPlugin from "@fullcalendar/list";
 
 import { tokens } from "../../theme";
 
-const Calendar = () => {
+const Calendar = ({ setCurrentID }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
+  // Estado loca, guarda turnos en formato evento para Fullcalendar
+  const [formattedTurnos, setFormattedTurnos] = useState([]);
 
   const dispatch = useDispatch();
-  const {turnos} = useSelector((state) => state.turnos);
+
+  const { turnos } = useSelector((state) => state.turnos);
 
   /*
   const [filtroProc, setFiltroProc] = useState("");
@@ -42,43 +45,30 @@ const Calendar = () => {
   const turno = useSelector((state) =>
     currentID ? state.turnos.turnos.find((turno) => turno._id === currentID) : null
   );
-
- const eliminarTurno = async (values, onSubmitProps) => {
-   const formData = URLSearchParams(values);
-   try {
-     const response = await fetch("http://localhost:8080/turnos", {
-       method: "DELETE",
-       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-       body: formData,
-     });
-     if (response.ok) {
-       onSubmitProps.resetForm();
-     } else {
-       console.log("Error eliminando turno: ", response.statusText);
-     }
-   } catch (error) {
-     console.log("Error al eliminar turno: ", error);
-   }
- };
-
- useEffect(() => {
-   dispatch(setTurnos({ turnos: [] }));
-   getTurnos();
- }, []);
  */
 
   useEffect(() => {
-    dispatch(fetchAllClientes());
-    dispatch(fetchAllProcedimientos());
     dispatch(fetchAllTurnos());
+    // Si turno está declarado, mapea turnos a eventos, luego los setea a una const
+    if (Array.isArray(turnos)) {
+      const formatted = turnos.map((turno) => ({
+        id: turno._id,
+        title: turno.procedimiento || "Proc s/nombre",
+        start: turno.fecha,
+        extendedProps: {
+          cliente: turno.cliente,
+          detalle: turno.detalle,
+          observacion: turno.observacion,
+        }
+      }));
+      setFormattedTurnos(formatted);
+    }
   }, []);
-
 
   const handleDateClick = (selected) => {
     const title = prompt("Ingresar título del nuevo evento");
     const calendarApi = selected.view.calendar;
     calendarApi.unselect();
-    console.log("log from handledateclick", turnos);
     if (title) {
       calendarApi.addEvent({
         id: `${selected.dateStr}-${title}`,
@@ -90,12 +80,13 @@ const Calendar = () => {
     }
   };
 
+  /*
   const handleEventClick = (selected) => {
     if (window.confirm(`¿Eliminar evento? '${selected.event.title}'`)) {
       selected.event.remove();
     }
-    console.log("log from handleeventclick", turnos);
   };
+*/
 
   return (
     <Box m="20px">
@@ -155,9 +146,9 @@ const Calendar = () => {
             selectMirror={true}
             dayMaxEvents={true}
             select={handleDateClick}
-            eventClick={handleEventClick}
-            eventsSet={(events) => setCurrentEvents(events)}
-            initialEvents={turnos}
+            eventClick={(e) => setCurrentID(e.event.id)}
+            eventsSet={(events) => { if (events !== currentEvents) { setCurrentEvents(events) }; }}
+            events={formattedTurnos}
           />
         </Box>
       </Box>

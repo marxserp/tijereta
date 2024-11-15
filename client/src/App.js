@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -11,10 +11,21 @@ import Clientes from "./scenes/clientes";
 import FAQ from "./scenes/faq";
 import Procedimientos from "./scenes/procedimientos";
 
+import { fetchAllClientes } from "./state/clientes";
+import { fetchAllProcedimientos } from "./state/procedimientos";
+import { fetchAllTurnos } from "./state/turnos";
+
 function App() {
+  const dispatch = useDispatch();
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const isAuth = Boolean(useSelector((state) => state.auth.token));
+
+  useEffect(() => {
+    dispatch(fetchAllClientes());
+    dispatch(fetchAllProcedimientos());
+    dispatch(fetchAllTurnos());
+  }, []);
 
   return (
     <BrowserRouter>

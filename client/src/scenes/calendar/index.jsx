@@ -6,7 +6,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 
 import Header from "../../components/Header";
-import SideContent from "./SideContent";
+// import SideContent from "./SideContent";
 import AdminTurnos from "./Form";
 import Calendar from "./Calendar";
 import Sidebar from "../global/Sidebar";
