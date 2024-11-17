@@ -44,6 +44,7 @@ export const getSingleCliente = async (req, res) => {
 export const updateCliente = async (req, res) => {
   const { id } = req.params;
   const { nombre, apellido, contacto, correo } = req.body;
+  console.log("Logging updatedCliente from cliente.controller ", req.body);
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No hay un cliente con ID ${id}.`);
@@ -57,10 +58,26 @@ export const updateCliente = async (req, res) => {
     _id: id,
   };
   await clienteModel.findByIdAndUpdate(id, updatedCliente, { new: true });
-
   res.json(updatedCliente);
 };
 
 // Remover cliente (soft delete)
+export const removeCliente = async (req, res) => {
+  const { id } = req.params;
+  if (!req.userId) {
+    return res.json({ message: "Sin autorización: usuario sin autenticar." });
+  }
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No hay clientes con ID ${id}`);
+  const cliente = await clienteModel.findById(id);
+  const isRemoved = !cliente.isRemoved;
+  const updatedCliente = await clienteModel.findByIdAndUpdate(id, { isRemoved }, { new: true });
+  res.json(updatedCliente);
+};
 
 // Eliminar cliente (hard delete)
+export const deleteCliente = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No hay clientes con ID ${id}`);
+  await clienteModel.findByIdAndRemove(id);
+  res.json({ message: "Cliente eliminado permanentemente." });
+};

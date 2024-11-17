@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const procedimientoSchema = mongoose.Schema(
+const productoSchema = mongoose.Schema(
   {
     nombre: { type: String, trim: true },
     descripcion: String,
@@ -13,6 +13,6 @@ const procedimientoSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const procedimientoModel = mongoose.model("Procedimiento", procedimientoSchema);
+const productoModel = mongoose.model("Producto", productoSchema);
 
-export default procedimientoModel;
+export default productoModel;

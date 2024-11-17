@@ -30,9 +30,17 @@ export const createTurno = createAsyncThunk(
 
 export const updateTurno = createAsyncThunk(
   "turnos/updateTurno",
-  async (id, turno) => {
+  async ({ id, turno }) => {
     const response = await api.updateTurno(id, turno);
     return response.data;
+  }
+);
+
+export const deleteTurno = createAsyncThunk(
+  "turnos/deleteTurno",
+  async (id) => {
+    await api.deleteTurno(id);
+    return id;
   }
 );
 
@@ -54,8 +62,12 @@ const turnosSlice = createSlice({
       };
     });
     builder.addCase(createTurno.fulfilled, (state, action) => {
-      // using concat instead of push cause it returns a copy of the original array, thus does not breaks redux inmutability principle
       state.turnos = state.turnos.concat(action.payload);
+    }).addCase(updateTurno.fulfilled, (state, action) => {
+      const turnos = state.turnos.filter((turno) => turno._id !== action.payload._id);
+      state.turnos = [...turnos, action.payload];
+    }).addCase(deleteTurno.fulfilled, (state, action) => {
+      state.turnos = state.turnos.filter((turnos) => turnos._id !== action.payload);
     });
   },
 });

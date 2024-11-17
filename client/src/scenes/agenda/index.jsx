@@ -7,9 +7,9 @@ import { tokens } from "../../theme";
 
 import Header from "../../components/Header";
 // import SideContent from "./SideContent";
-import AdminTurnos from "./Form";
-import Calendar from "./Calendar";
-import Sidebar from "../global/Sidebar";
+import AddTurnoForm from "./AddTurnoForm";
+import TurnoAgenda from "./TurnoAgenda";
+import Sidebar from "../../components/Sidebar";
 
 const Agenda = () => {
   const [isSidebar, setIsSidebar] = useState(true);
@@ -31,10 +31,10 @@ const Agenda = () => {
           justifyContent="space-between"
         >
           <Box flexBasis="38%" mr="2rem">
-            <AdminTurnos currentID={currentID} setCurrentID={setCurrentID} turno={turnoId} />
+            <AddTurnoForm currentID={currentID} setCurrentID={setCurrentID} turno={turnoId} />
           </Box>
           <Box flexBasis="60%">
-            <Calendar setCurrentID={setCurrentID} />
+            <TurnoAgenda setCurrentID={setCurrentID} />
           </Box>
         </Box>
       </Box>

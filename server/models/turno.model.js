@@ -4,7 +4,7 @@ const turnoSchema = mongoose.Schema(
   {
     fecha: { type: Date, required: true },
     id_cliente: { type: String, required: true },
-    id_procedimiento: { type: String, required: true },
+    id_producto: { type: String, required: true },
     detalle: { type: String, required: true },
     sena: { type: Number, default: 1 },
     observacion: { type: String, required: true },

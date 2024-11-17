@@ -4,63 +4,83 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import Topbar from "./scenes/global/Topbar";
+
+import Layout from "./components/Layout";
 import Login from "./scenes/login";
-import Calendar from "./scenes/calendar";
+
+import Agenda from "./scenes/agenda";
+import AddTurnoForm from "./scenes/agenda/AddTurnoForm";
+import SingleTurnoPage from "./scenes/agenda/SingleTurnoPage";
+import UpdateTurnoForm from "./scenes/agenda/UpdateTurnoForm";
+
 import Clientes from "./scenes/clientes";
+import SingleClientePage from "./scenes/clientes/SingleClientePage";
+import AddClienteForm from "./scenes/clientes/AddClienteForm";
+import UpdateClienteForm from "./scenes/clientes/UpdateClienteForm";
+
+import Productos from "./scenes/productos";
+import AddProductoForm from "./scenes/productos/AddProductoForm";
+import UpdateProductoForm from "./scenes/productos/UpdateProductoForm";
+
 import FAQ from "./scenes/faq";
-import Procedimientos from "./scenes/procedimientos";
 
 import { fetchAllClientes } from "./state/clientes";
-import { fetchAllProcedimientos } from "./state/procedimientos";
+import { fetchAllProductos } from "./state/productos";
 import { fetchAllTurnos } from "./state/turnos";
 
 function App() {
   const dispatch = useDispatch();
   const [theme, colorMode] = useMode();
-  const [isSidebar, setIsSidebar] = useState(true);
   const isAuth = Boolean(useSelector((state) => state.auth.token));
 
   useEffect(() => {
     dispatch(fetchAllClientes());
-    dispatch(fetchAllProcedimientos());
+    dispatch(fetchAllProductos());
     dispatch(fetchAllTurnos());
   }, []);
 
+  function returnElementContent(isAuth, element) {
+    if (isAuth) return element
+    return <Navigate to="/auth" />
+  }
+
   return (
-    <BrowserRouter>
-      <ColorModeContext.Provider value={colorMode}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Routes>
+          <Route path="/auth" element={<Login />} />
 
-          <div className="app">
-            <main className="content">
-              <Topbar setIsSidebar={setIsSidebar} />
+          <Route path="/" element={isAuth ? <Layout /> : <Navigate to="/auth" />}>
+            <Route index element={<Clientes />} />
 
-              <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/auth" element={<Login />} />
-                <Route
-                  path="/agenda"
-                  element={isAuth ? <Calendar /> : <Navigate to="/auth" />}
-                />
-                <Route
-                  path="/clientes"
-                  element={isAuth ? <Clientes /> : <Navigate to="/auth" />}
-                />
-                <Route
-                  path="/procedimientos"
-                  element={
-                    isAuth ? <Procedimientos /> : <Navigate to="/auth" />
-                  }
-                />
-                <Route path="/ayuda" element={<FAQ />} />
-              </Routes>
-            </main>
-          </div>
-        </ThemeProvider>
-      </ColorModeContext.Provider>
-    </BrowserRouter>
+            <Route path="cliente">
+              <Route index element={<AddClienteForm />} />
+              <Route path=":clienteID" element={<SingleClientePage />} />
+              <Route path="editar/:clienteID" element={<UpdateClienteForm />} />
+            </Route>
+
+            <Route path="agenda">
+              <Route index element={<Agenda />} />
+              <Route path="nuevo" element={<AddTurnoForm />} />
+              <Route path=":turnoID" element={<SingleTurnoPage />} />
+              <Route path="editar/:turnoID" element={<UpdateTurnoForm />} />
+            </Route>
+
+            <Route path="producto">
+              <Route index element={<Productos />} />
+              <Route path="nuevo" element={<AddProductoForm />} />
+              <Route path="editar/:productoID" element={<UpdateProductoForm />} />
+            </Route>
+
+            <Route path="ayuda" element={returnElementContent(isAuth, <FAQ />)} />
+
+            {/* Reemplazar con componente 404 */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
 

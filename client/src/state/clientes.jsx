@@ -30,9 +30,26 @@ export const createCliente = createAsyncThunk(
 
 export const updateCliente = createAsyncThunk(
   "clientes/updateCliente",
-  async (id, cliente) => {
-    const response = await api.updateCliente(id, cliente);
-    return response.data;
+  async ({ id, cliente }) => {
+    try {
+      const response = await api.updateCliente(id, cliente);
+      return response.data;
+    } catch (error) {
+      console.log("updateCliente thunk failed, caught ", error);
+      return cliente;
+    }
+  }
+);
+
+export const deleteCliente = createAsyncThunk(
+  "clientes/deleteCliente",
+  async (id, thunkAPI) => {
+    try {
+      await api.deleteCliente(id);
+      return id;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
   }
 );
 
@@ -53,15 +70,24 @@ const clientesSlice = createSlice({
         error: null,
       };
     });
-    builder.addCase(createCliente.fulfilled, (state, action) => {
-      // using concat instead of push cause it returns a copy of the original array, thus does not breaks redux inmutability principle
-      state.clientes = state.clientes.concat(action.payload);
-    });
+    builder
+      .addCase(createCliente.fulfilled, (state, action) => {
+        // Usás concat en vez de push porque retorna copia del arreglo original, y respetás inmutabilidad
+        state.clientes = state.clientes.concat(action.payload);
+      }).addCase(updateCliente.fulfilled, (state, action) => {
+        // Eliminás el que tiene datos viejos y concatenás el que tiene datos nuevos
+        const clientes = state.clientes.filter((cliente) => cliente._id !== action.payload._id);
+        state.clientes = [...clientes, action.payload];
+      }).addCase(deleteCliente.fulfilled, (state, action) => {
+        // Removés cliente filtrándolo por la id que retorna el thunk
+        state.clientes = state.clientes.filter((cliente) => cliente._id !== action.payload);
+      });
   },
 });
 
 // TEST
 export const selectClienteById = (state, clienteID) => {
-  state.clientes.find((cliente) => cliente._id === clienteID);
+  return state.clientes.clientes.find((cliente) => cliente._id === clienteID);
+  
 };
 export default clientesSlice.reducer;

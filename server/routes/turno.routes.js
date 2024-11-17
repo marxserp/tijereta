@@ -14,6 +14,6 @@ router.route("/").post(createTurno);
 router.route("/").get(getAllTurnos);
 router.route("/:id").get(getSingleTurno);
 router.route("/:id").patch(updateTurno);
-router.route("/:id").patch(deleteTurno);
+router.route("/:id").delete(deleteTurno);
 
 export default router;

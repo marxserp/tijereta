@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import "react-pro-sidebar/dist/css/styles.css";
-import { tokens } from "../../theme";
+import { tokens } from "../theme";
 // import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
@@ -118,8 +118,8 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Procedimientos"
-              to="/procedimientos"
+              title="Productos"
+              to="/productos"
               icon={<SellOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

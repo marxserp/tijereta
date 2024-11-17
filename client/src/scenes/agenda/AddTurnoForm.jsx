@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setTurnos } from "../../state/turnos";
-import { createTurno, updateTurno } from "../../api";
+import { setTurnos, createTurno, updateTurno, deleteTurno } from "../../state/turnos";
+// import { createTurno, updateTurno } from "../../api";
 import { isEqual } from 'lodash';
 
 import { Formik, useFormikContext } from "formik";
@@ -30,7 +30,7 @@ const valueValidation = yup.object().shape({
 const initialValues = {
   fecha: dayjs().format('DD-MM-YYYY'),
   id_cliente: "",
-  id_procedimiento: "",
+  id_producto: "",
   detalle: "",
   sena: 0,
   observacion: "",
@@ -42,7 +42,6 @@ const FormObserver = ({ turno }) => {
   const { setValues } = useFormikContext();
   const [previousTurno, setPreviousTurno] = useState(null);
   useEffect(() => {
-    console.log("before setting values", turno);
     // Solo setea valores de Form si turno está definido Y es diferente a previousTurno
     if (turno && (turno && (!previousTurno || !isEqual(turno, previousTurno)))) {
       setValues({
@@ -52,7 +51,6 @@ const FormObserver = ({ turno }) => {
       });
       // Seguimiento de turno actual para evitar que se ejecute nuevamente
       setPreviousTurno(turno);
-      console.log("after setting values", turno);
     }
     // Solo revisa turno y setValues para evitar bucle infinito
   }, [turno, setValues]);
@@ -60,7 +58,7 @@ const FormObserver = ({ turno }) => {
   return null;
 };
 
-const AdminTurnos = ({ currentID, setCurrentID }) => {
+const AddTurnoForm = ({ currentID, setCurrentID }) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const dispatch = useDispatch();
 
@@ -69,20 +67,20 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
   const turno = useSelector((state) =>
     currentID ? state.turnos.turnos.find((turno) => turno._id === currentID) : null
   );
-  const { procedimientos } = useSelector((state) => state.procedimientos);
+  const { productos } = useSelector((state) => state.productos);
   const { clientes } = useSelector((state) => state.clientes);
 
   // Estado local que guarda id/fecha de elemento/fecha seleccionado
-  const [selectedProcID, setSelectedProcID] = useState("");
+  const [selectedProdID, setSelectedProdID] = useState("");
   const [selectedClienID, setSelectedClienID] = useState("");
   const [selectedDateValue, setSelectedDateValue] = useState(dayjs().format('DD-MM-YYYY'));
 
   useEffect(() => {
     if (turno !== 0 && turno !== null) {
-      console.log("Setting cliente and procedimiento IDs, logging turno.fecha: ", turno.fecha)
+      console.log("Setting cliente and producto IDs, logging turno.fecha: ", turno.fecha)
       setSelectedDateValue(dayjs(turno.fecha).format('DD-MM-YYYY'));
       setSelectedClienID(turno.cliente);
-      setSelectedProcID(turno.procedimiento);
+      setSelectedProdID(turno.producto);
     }
   }, [turno]);
 
@@ -90,10 +88,19 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
     const formData = new URLSearchParams(values);
     formData.append("usuario", _id);
     if (currentID === 0 || currentID === null) {
+      console.log("loggin formData from turno handleFormSubmit", formData);
       dispatch(createTurno(formData));
     } else {
       dispatch(updateTurno(currentID, formData));
     };
+  }
+
+  const handleDelete = async () => {
+
+    if (currentID !== 0 && currentID !== null) {
+      dispatch(deleteTurno(currentID));
+    }
+    setCurrentID(0);
   }
 
   return (
@@ -146,14 +153,14 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
               <InputLabel id="productoLabel">Elegí un producto</InputLabel>
 
               <Select
-                name="id_procedimiento"
-                value={selectedProcID}
+                name="id_producto"
+                value={selectedProdID}
                 label="Elegí un producto"
-                onChange={(e) => setSelectedProcID("id_procedimiento", e.target.value)}
+                onChange={(e) => setSelectedProdID("id_producto", e.target.value)}
                 sx={{ gridColumn: "span 4" }}>
-                {procedimientos.map((procedimiento) => (
-                  <MenuItem value={procedimiento._id}>
-                    <Typography>{procedimiento.nombre}</Typography>
+                {productos.map((producto) => (
+                  <MenuItem value={producto._id}>
+                    <Typography>{producto.nombre}</Typography>
                   </MenuItem>
                 ))}
               </Select>
@@ -164,7 +171,7 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
               variant="filled"
               type="number"
               label="Seña"
-              
+
               onChange={handleChange}
               value={values.sena}
               name="sena"
@@ -183,7 +190,7 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
               variant="filled"
               type="text"
               label="Detalles"
-              
+
               onChange={handleChange}
               value={values.detalle}
               name="detalle"
@@ -197,7 +204,7 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
               variant="filled"
               type="text"
               label="Observaciones"
-              
+
               onChange={handleChange}
               value={values.observacion}
               name="observacion"
@@ -216,6 +223,7 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
             <Button variant="text" onClick={() => { resetForm(); setCurrentID(0); }}>
               Limpiar todo
             </Button>
+            <Button variant="text" onClick={() => handleDelete()}>Eliminar</Button>
             <Button type="submit" color="secondary" variant="contained">
               Guardar
             </Button>
@@ -227,4 +235,4 @@ const AdminTurnos = ({ currentID, setCurrentID }) => {
   );
 };
 
-export default AdminTurnos;
+export default AddTurnoForm;

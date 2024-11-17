@@ -1,39 +1,24 @@
-import { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Box, useTheme } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
+import { useTheme } from "@mui/material";
 
-import { fetchAllProcedimientos } from "../../state/procedimientos";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllClientes } from "../../state/clientes";
 
-const ListaProcedimientos = ({setCurrentID}) => {
+const ClienteList = ({ setCurrentID }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  
+
   const dispatch = useDispatch();
-  const { procedimientos } = useSelector((state) => state.procedimientos);
-  
-  
-  //const token = useSelector((state) => state.token);
-  /* const isLoading = useSelector((state) => state.isLoading); */
-  // Selected index is saved using ref so as not to cause a re-render
-  //let currentID = useRef(null);
-  // Not the case for formValues, since we need to send it to Form with every change
-  //const [formValues, setFormValues] = useState(null);
-  // We'll try to setFormValues if currentID changes, leaving it null otherwise
-  /* setFormValues(
-    useSelector((state) =>
-      currentID
-    ? state.procedimientos.procedimientos.find((p) => p._id === currentID)
-    : null
-  )
-); */
+  const { clientes } = useSelector((state) => state.clientes);
 
-useEffect(() => {
-  dispatch(fetchAllProcedimientos());
-}, []);
+  useEffect(() => {
+    dispatch(fetchAllClientes());
+  }, []);
 
-const columns = [
+  const columns = [
     {
       field: "nombre",
       headerName: "Nombre",
@@ -41,26 +26,27 @@ const columns = [
       cellClassName: "name-column--cell",
     },
     {
-      field: "tipo",
-      headerName: "Tipo",
+      field: "apellido",
+      headerName: "Apellido",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "contacto",
+      headerName: "Teléfono",
       flex: 1,
     },
     {
-      field: "duracion",
-      headerName: "Duración",
-      flex: 0.8,
-    },
-    {
-      field: "precio",
-      headerName: "Precio",
-      flex: 0.8,
+      field: "correo",
+      headerName: "Correo",
+      flex: 1,
     },
   ];
 
   return (
     <Box
       m="0"
-      height="80vh"
+      height="70vh"
       sx={{
         "& .MuiDataGrid-root": {
           border: "none",
@@ -91,7 +77,7 @@ const columns = [
       }}
     >
       <DataGrid
-        rows={procedimientos}
+        rows={clientes}
         columns={columns}
         components={{ Toolbar: GridToolbar }}
         getRowId={(row) => row._id}
@@ -101,4 +87,4 @@ const columns = [
   );
 };
 
-export default ListaProcedimientos;
+export default ClienteList;

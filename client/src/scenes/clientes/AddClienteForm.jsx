@@ -1,8 +1,8 @@
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectClienteById } from "../../state/clientes";
-import { createCliente, updateCliente } from "../../api";
+import { selectClienteById, updateCliente, deleteCliente, createCliente } from "../../state/clientes";
+// import { createCliente } from "../../api";
 
 import { Box, Button, TextField } from "@mui/material";
 import { Formik, useFormikContext } from "formik";
@@ -37,7 +37,7 @@ const FormObserver = ({ cliente }) => {
   return null;
 };
 
-const AdminClientes = ({ currentID, setCurrentID }) => {
+const AddClienteForm = ({ currentID, setCurrentID }) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const dispatch = useDispatch();
 
@@ -48,13 +48,22 @@ const AdminClientes = ({ currentID, setCurrentID }) => {
     currentID ? state.clientes.clientes.find((cliente) => cliente._id === currentID) : null
   );
 
+  const handleDelete = async () => {
+    if (currentID !== 0 && currentID !== null) {
+      dispatch(deleteCliente(currentID));
+      setCurrentID(0);
+    }
+  };
+
   const handleFormSubmit = async (values, onSubmitProps) => {
     const formData = new URLSearchParams(values);
     formData.append("usuario", _id);
     if (currentID === 0 || currentID === null) {
       dispatch(createCliente(formData));
     } else {
-      dispatch(updateCliente(currentID, formData));
+      console.log("loggin currentID, formData from handleFormSubmit>else", currentID, formData);
+      dispatch(updateCliente({ id: currentID, cliente: formData }));
+      setCurrentID(0);
     }
   };
 
@@ -139,6 +148,7 @@ const AdminClientes = ({ currentID, setCurrentID }) => {
             <Button variant="text" onClick={resetForm}>
               Limpiar todo
             </Button>
+            <Button variant="text" onClick={() => handleDelete()}>Eliminar</Button>
             <Button type="submit" color="secondary" variant="contained">
               Guardar
             </Button>
@@ -150,4 +160,4 @@ const AdminClientes = ({ currentID, setCurrentID }) => {
   );
 };
 
-export default AdminClientes;
+export default AddClienteForm;

@@ -6,7 +6,7 @@ export const createTurno = async (req, res) => {
     const {
       fecha,
       id_cliente,
-      id_procedimiento,
+      id_producto,
       detalle,
       sena,
       observacion,
@@ -17,7 +17,7 @@ export const createTurno = async (req, res) => {
     const newTurno = new turnoModel({
       fecha,
       id_cliente,
-      id_procedimiento,
+      id_producto,
       detalle,
       sena,
       observacion,
@@ -28,7 +28,7 @@ export const createTurno = async (req, res) => {
     await newTurno.save();
     res.status(201).json(newTurno)
   } catch (error) {
-    res.status(500).json({message: `Error de controlador al registrar un turno: ${error.message}`,});
+    res.status(500).json({ message: `Error de controlador al registrar un turno: ${error.message}`, });
   }
 };
 
@@ -56,7 +56,7 @@ export const updateTurno = async (req, res) => {
   const {
     fecha,
     id_cliente,
-    id_procedimiento,
+    id_producto,
     detalle,
     sena,
     observacion,
@@ -70,7 +70,7 @@ export const updateTurno = async (req, res) => {
   const updatedTurno = {
     fecha,
     id_cliente,
-    id_procedimiento,
+    id_producto,
     detalle,
     sena,
     observacion,
@@ -85,10 +85,7 @@ export const updateTurno = async (req, res) => {
 
 export const deleteTurno = async (req, res) => {
   const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No existe ningún turno de ID ${id}`);
-
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No existe ningún turno de ID ${id}`);
   await turnoModel.findByIdAndRemove(id);
   res.json({ message: "Turno eliminado." });
 };

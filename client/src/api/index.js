@@ -19,14 +19,14 @@ export const updateCliente = (id, updatedCliente) =>
   API.patch(`/clientes/${id}`, updatedCliente); // Chequear si es conveniente usar PUT o PATCH!
 export const deleteCliente = (id) => API.delete(`/clientes/${id}`);
 
-export const createProcedimiento = (newProcedimiento) =>
-  API.post("/procedimientos", newProcedimiento);
-export const fetchAllProcedimientos = () => API.get("/procedimientos");
-export const fetchSingleProcedimiento = (id) =>
-  API.get(`/procedimientos/${id}`);
-export const updateProcedimiento = (id, updatedProcedimiento) =>
-  API.patch(`/procedimientos/${id}`, updatedProcedimiento);
-export const deleteProcedimiento = (id) => API.delete(`/procedimientos/${id}`);
+export const createProducto = (newProducto) =>
+  API.post("/productos", newProducto);
+export const fetchAllProductos = () => API.get("/productos");
+export const fetchSingleProducto = (id) =>
+  API.get(`/productos/${id}`);
+export const updateProducto = (id, updatedProducto) =>
+  API.patch(`/productos/${id}`, updatedProducto);
+export const deleteProducto = (id) => API.delete(`/productos/${id}`);
 
 export const createTurno = (newTurno) => API.post("/turnos", newTurno);
 export const fetchAllTurnos = () => API.get("/turnos");

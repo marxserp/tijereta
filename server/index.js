@@ -7,7 +7,7 @@ import connectDB from "./mongodb/connect.js";
 import authRouter from "./routes/auth.routes.js";
 import turnoRouter from "./routes/turno.routes.js";
 import clienteRouter from "./routes/cliente.routes.js";
-import procedimientoRouter from "./routes/procedimiento.routes.js";
+import productoRouter from "./routes/producto.routes.js";
 
 // Configuración
 dotenv.config();
@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 // Rutas
 app.use("/auth", authRouter);
 app.use("/turnos", turnoRouter);
-app.use("/procedimientos", procedimientoRouter);
+app.use("/productos", productoRouter);
 app.use("/clientes", clienteRouter);
 
 // Mangosta

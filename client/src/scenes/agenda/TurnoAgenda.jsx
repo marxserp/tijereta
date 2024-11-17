@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllClientes } from "../../state/clientes";
-import { fetchAllProcedimientos } from "../../state/procedimientos";
+import { fetchAllProductos } from "../../state/productos";
 import { fetchAllTurnos } from "../../state/turnos";
 
 import {
@@ -27,7 +27,7 @@ import listPlugin from "@fullcalendar/list";
 
 import { tokens } from "../../theme";
 
-const Calendar = ({ setCurrentID }) => {
+const TurnoAgenda = ({ setCurrentID }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
@@ -39,9 +39,9 @@ const Calendar = ({ setCurrentID }) => {
   const { turnos } = useSelector((state) => state.turnos);
 
   /*
-  const [filtroProc, setFiltroProc] = useState("");
+  const [filtroProd, setFiltroProd] = useState("");
   const [filtroCli, setFiltroCli] = useState("");
-  const cliFiltrados = useMemo(() => procedimientos.filter((proc) => proc.startsWith(filtroProc), [filtroProc]));
+  const cliFiltrados = useMemo(() => productos.filter((prod) => prod.startsWith(filtroProd), [filtroProd]));
   const turno = useSelector((state) =>
     currentID ? state.turnos.turnos.find((turno) => turno._id === currentID) : null
   );
@@ -53,7 +53,7 @@ const Calendar = ({ setCurrentID }) => {
     if (Array.isArray(turnos)) {
       const formatted = turnos.map((turno) => ({
         id: turno._id,
-        title: turno.procedimiento || "Proc s/nombre",
+        title: turno.producto || "Prod s/nombre",
         start: turno.fecha,
         extendedProps: {
           cliente: turno.cliente,
@@ -156,4 +156,4 @@ const Calendar = ({ setCurrentID }) => {
   );
 };
 
-export default Calendar;
+export default TurnoAgenda;
