@@ -88,6 +88,6 @@ const clientesSlice = createSlice({
 // TEST
 export const selectClienteById = (state, clienteID) => {
   return state.clientes.clientes.find((cliente) => cliente._id === clienteID);
-  
 };
+
 export default clientesSlice.reducer;

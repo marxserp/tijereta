@@ -76,8 +76,9 @@ const productosSlice = createSlice({
 });
 
 // TEST
-export const selectClienteById = (state, clienteID) => {
-  state.clientes.find((cliente) => cliente._id === clienteID);
+export const selectProductoById = (state, productoID) => {
+  console.log("loggin productoID from selectProductoById ", productoID);
+  return state.productos.productos.find((producto) => producto._id === productoID);
 };
 
 export default productosSlice.reducer;

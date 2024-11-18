@@ -74,6 +74,29 @@ const turnosSlice = createSlice({
 
 // TEST
 export const selectTurnoById = (state, turnoID) => {
-  state.turnos.find((turno) => turno._id === turnoID);
+  return state.turnos.turnos.find((turno) => turno._id === turnoID);
 };
+
+/*export const selectClienteNextTurno = (state, clienteID) => {
+  return  state.turnos.turnos.find((turno) => turno.id_cliente === clienteID);
+};*/
+
+export const selectClienteNextTurno = (state, clienteID) => {
+  const currentDate = new Date();
+  // 1. Filtra turnos desde hoy al futuro
+  // 2. Ordena por fecha
+  // 3. Agarra el primer turno (el [0] al final)
+  return state.turnos.turnos.
+    filter(turno => turno.id_cliente === clienteID && new Date(turno.fecha) > currentDate).
+    sort((a, b) => new Date(a.fecha) - new Date(b.fecha))[0];
+};
+
+export const selectClienteFutureTurnos = (state, clienteID) => {
+  const currentDate = new Date();
+  // Cambia en que incluye fecha actual y trae TODOS los turnos, no solo 1
+  return state.turnos.turnos.
+    filter(turno => turno.id_cliente === clienteID && new Date(turno.fecha) >= currentDate).
+    sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+};
+
 export default turnosSlice.reducer;

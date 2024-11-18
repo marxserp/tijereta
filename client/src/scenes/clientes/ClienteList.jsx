@@ -36,11 +36,6 @@ const ClienteList = ({ setCurrentID }) => {
       headerName: "Teléfono",
       flex: 1,
     },
-    {
-      field: "correo",
-      headerName: "Correo",
-      flex: 1,
-    },
   ];
 
   return (

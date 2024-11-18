@@ -18,7 +18,6 @@ const Agenda = () => {
 
   return (
     <Box position="relative" display="flex" justifyContent="center">
-      <Sidebar isSidebar={isSidebar} />
       <Box width="100%" m="20px">
         <Header
           title="Calendario"

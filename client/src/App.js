@@ -54,8 +54,9 @@ function App() {
           <Route path="/" element={isAuth ? <Layout /> : <Navigate to="/auth" />}>
             <Route index element={<Clientes />} />
 
-            <Route path="cliente">
-              <Route index element={<AddClienteForm />} />
+            <Route path="clientes">
+              <Route index element={<Clientes />} />
+              <Route path="nuevo" element={<AddClienteForm />} />
               <Route path=":clienteID" element={<SingleClientePage />} />
               <Route path="editar/:clienteID" element={<UpdateClienteForm />} />
             </Route>
@@ -67,7 +68,7 @@ function App() {
               <Route path="editar/:turnoID" element={<UpdateTurnoForm />} />
             </Route>
 
-            <Route path="producto">
+            <Route path="productos">
               <Route index element={<Productos />} />
               <Route path="nuevo" element={<AddProductoForm />} />
               <Route path="editar/:productoID" element={<UpdateProductoForm />} />

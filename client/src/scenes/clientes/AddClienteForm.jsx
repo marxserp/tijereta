@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectClienteById, updateCliente, deleteCliente, createCliente } from "../../state/clientes";
+import { useParams, useNavigate } from 'react-router-dom';
 // import { createCliente } from "../../api";
 
 import { Box, Button, TextField } from "@mui/material";
@@ -10,10 +11,10 @@ import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery"
   ;
 const valueValidation = yup.object().shape({
-  nombre: yup.string().required("Obligatorio"),
+  nombre: yup.string().required("Campo obligatorio"),
   apellido: yup.string(),
-  correo: yup.string().required("Obligatorio").email("Correo no válido"),
-  contacto: yup.string(),
+  correo: yup.string().email("Formato de correo no válido"),
+  contacto: yup.number("Solo se admiten números").required("Campo obligatorio"),
 });
 const initialValues = {
   nombre: "",
@@ -30,40 +31,33 @@ const FormObserver = ({ cliente }) => {
         nombre: cliente.nombre,
         apellido: cliente.apellido,
         correo: cliente.correo,
-        contacto: cliente.contacto,
+        contacto: Number(cliente.contacto),
       });
     }
   }, [cliente, setValues]);
   return null;
 };
 
-const AddClienteForm = ({ currentID, setCurrentID }) => {
+const AddClienteForm = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  const clienteID = useParams();
   const _id = useSelector((state) => state.auth.usuario._id);
   // const cliente = useSelector((state) => selectClienteById(state, currentID));
   const token = useSelector((state) => state.auth.token);
   const cliente = useSelector((state) =>
-    currentID ? state.clientes.clientes.find((cliente) => cliente._id === currentID) : null
+    clienteID ? state.clientes.clientes.find((cliente) => cliente._id === clienteID) : null
   );
 
-  const handleDelete = async () => {
-    if (currentID !== 0 && currentID !== null) {
-      dispatch(deleteCliente(currentID));
-      setCurrentID(0);
-    }
-  };
-
   const handleFormSubmit = async (values, onSubmitProps) => {
-    const formData = new URLSearchParams(values);
-    formData.append("usuario", _id);
-    if (currentID === 0 || currentID === null) {
+    try {
+      const formData = new URLSearchParams(values);
+      formData.append("usuario", _id);
       dispatch(createCliente(formData));
-    } else {
-      console.log("loggin currentID, formData from handleFormSubmit>else", currentID, formData);
-      dispatch(updateCliente({ id: currentID, cliente: formData }));
-      setCurrentID(0);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -148,9 +142,8 @@ const AddClienteForm = ({ currentID, setCurrentID }) => {
             <Button variant="text" onClick={resetForm}>
               Limpiar todo
             </Button>
-            <Button variant="text" onClick={() => handleDelete()}>Eliminar</Button>
             <Button type="submit" color="secondary" variant="contained">
-              Guardar
+              Crear
             </Button>
           </Box>
           <FormObserver cliente={cliente} />

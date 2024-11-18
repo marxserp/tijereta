@@ -3,6 +3,7 @@ import * as api from "../api/index.js";
 
 const initialState = {
   mode: "light",
+  sidebar: true,
   usuario: null,
   token: null,
   status: "idle",
@@ -75,6 +76,7 @@ const authSlice = createSlice({
     });
   },
 });
+
 
 export const { setLogout } = authSlice.actions;
 export default authSlice.reducer;

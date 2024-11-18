@@ -6,30 +6,20 @@ import Header from "../../components/Header";
 import AddClienteForm from "./AddClienteForm";
 import ClienteList from "./ClienteList";
 import SingleClientePane from "./SingleClientePane";
-import Sidebar from "../../components/Sidebar";
 
 const Clientes = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [isSidebar, setIsSidebar] = useState(true);
   const [currentID, setCurrentID] = useState(0);
-
-  /*
-          <Box flexBasis="30%">
-            <AddClienteForm currentID={currentID} setCurrentID={setCurrentID} />
-          </Box>
-  */
-
   return (
-    <Box position="relative" display="flex" justifyContent="center">
-      <Sidebar isSidebar={isSidebar} />
-      <Box width="100%" m="20px">
+    <Box position="relative" display="flex" justifyContent="center" height="91vh" overflow="hidden">
+      <Box width="100%" m="20px 10px 10px 10px">
         <Header title="Clientes" />
-        <Box position="relative" display="flex" justifyContent="space-around">
-          <Box flexBasis="60%">
+        <Box position="relative" display="flex" flex="1" justifyContent="space-around" overflow="auto" >
+          <Box flexBasis="55%" overflow="auto">
             <ClienteList setCurrentID={setCurrentID} />
           </Box>
-          <Box flexBasis="40%">
+          <Box flexBasis="45%" overflow="auto">
             <SingleClientePane currentID={currentID} />
           </Box>
         </Box>

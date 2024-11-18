@@ -88,7 +88,6 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
     const formData = new URLSearchParams(values);
     formData.append("usuario", _id);
     if (currentID === 0 || currentID === null) {
-      console.log("loggin formData from turno handleFormSubmit", formData);
       dispatch(createTurno(formData));
     } else {
       dispatch(updateTurno(currentID, formData));
@@ -130,7 +129,7 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
               name="fecha"
               label="Elegí una fecha"
               value={selectedDateValue}
-              onChange={(e) => setSelectedDateValue("fecha", e ? dayjs(e).toDate() : '')}
+              onChange={(e) => { setSelectedDateValue(e ? dayjs(e).toDate() : ''); setFieldValue("fecha", e ? dayjs(e).toDate() : '') }}
               defaultValue={dayjs().format('DD-MM-YYYY')}
               sx={{ gridColumn: "span 2" }}
             />
@@ -140,7 +139,7 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
                 name="id_cliente"
                 value={selectedClienID}
                 label="Elegí un cliente"
-                onChange={(e) => setSelectedClienID("id_cliente", e.target.value)}>
+                onChange={(e) => { { setSelectedClienID(e.target.value); setFieldValue("id_cliente", e.target.value); } }}>
                 {clientes.map((cliente) => (
                   <MenuItem value={cliente._id}>
                     <Typography>{cliente.nombre}</Typography>
@@ -156,7 +155,7 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
                 name="id_producto"
                 value={selectedProdID}
                 label="Elegí un producto"
-                onChange={(e) => setSelectedProdID("id_producto", e.target.value)}
+                onChange={(e) => { { setSelectedProdID(e.target.value); setFieldValue("id_producto", e.target.value); } }}
                 sx={{ gridColumn: "span 4" }}>
                 {productos.map((producto) => (
                   <MenuItem value={producto._id}>

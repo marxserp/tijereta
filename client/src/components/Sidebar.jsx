@@ -5,12 +5,15 @@ import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../theme";
-// import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
+
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
+import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
+import ContactsRoundedIcon from '@mui/icons-material/ContactsRounded';
+import LocalMallRoundedIcon from '@mui/icons-material/LocalMallRounded';
+import HelpCenterRoundedIcon from '@mui/icons-material/HelpCenterRounded';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -36,7 +39,6 @@ const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const user = useSelector((state) => state.user);
-  const nombreCompleto = user ? `${user.nombre} ${user.apellido}` : "";
 
   return (
     <Box
@@ -60,74 +62,56 @@ const Sidebar = () => {
     >
       <ProSidebar collapsed={isCollapsed} height="100%">
         <Menu iconShape="square">
-          {/* LOGO AND MENU ICON */}
           <MenuItem
             onClick={() => setIsCollapsed(!isCollapsed)}
-            icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+            icon={isCollapsed ? <MenuRoundedIcon /> : undefined}
             style={{
-              margin: "0 0 20px 0",
               color: colors.grey[100],
             }}
           >
             {!isCollapsed && (
               <Box
                 display="flex"
-                justifyContent="space-between"
+                justifyContent="left"
                 alignItems="center"
-                ml="15px"
-                mr="30px"
+                ml="12px"
               >
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
-                  <MenuOutlinedIcon />
+                  <MenuOpenRoundedIcon />
                 </IconButton>
-                <Typography variant="h3" color={colors.grey[100]}>
-                  TIJERETA
+                <Typography paddingLeft="3%" color={colors.grey[100]}>
+                  Menú
                 </Typography>
               </Box>
             )}
           </MenuItem>
 
-          {!isCollapsed && (
-            <Box mb="20px">
-              <Box textAlign="center">
-                <Typography
-                  variant="h3"
-                  color={colors.grey[100]}
-                  fontWeight="bold"
-                  sx={{ m: "10px 0 0 0" }}
-                >
-                  {nombreCompleto}
-                </Typography>
-              </Box>
-            </Box>
-          )}
-
-          <Box paddingLeft={isCollapsed ? undefined : "6%"}>
+          <Box paddingLeft={isCollapsed ? undefined : "3%"}>
             <Item
               title="Agenda"
               to="/agenda"
-              icon={<CalendarTodayOutlinedIcon />}
+              icon={<CalendarTodayRoundedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Clientes"
               to="/clientes"
-              icon={<ContactsOutlinedIcon />}
+              icon={<ContactsRoundedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Productos"
               to="/productos"
-              icon={<SellOutlinedIcon />}
+              icon={<LocalMallRoundedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Ayuda"
               to="/ayuda"
-              icon={<HelpOutlineOutlinedIcon />}
+              icon={<HelpCenterRoundedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
