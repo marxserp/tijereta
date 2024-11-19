@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: "true" }));
 app.use(cors()); // Añadido de middleware
 
 app.get("/", (req, res) => {
-  res.send({ message: "Hello World!" });
+  res.send({ message: "Server up and running" });
 });
 
 // Rutas
@@ -30,7 +30,7 @@ app.use("/clientes", clienteRouter);
 const startServer = async () => {
   try {
     connectDB(process.env.MONGODB_URL);
-    app.listen(8080, () =>
+    app.listen(process.env.PORT, () =>
       console.log("Server started on port http://localhost:8080")
     );
   } catch (error) {
