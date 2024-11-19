@@ -6,6 +6,7 @@ import { useTheme } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllClientes } from "../../state/clientes";
+import ShortToolbar from "../../components/GridToolbar";
 
 const ClienteList = ({ setCurrentID }) => {
   const theme = useTheme();
@@ -41,7 +42,7 @@ const ClienteList = ({ setCurrentID }) => {
   return (
     <Box
       m="0"
-      height="70vh"
+      height="78vh"
       sx={{
         "& .MuiDataGrid-root": {
           border: "none",
@@ -72,9 +73,11 @@ const ClienteList = ({ setCurrentID }) => {
       }}
     >
       <DataGrid
+        density="compact"
         rows={clientes}
         columns={columns}
-        components={{ Toolbar: GridToolbar }}
+        disableRowSelectionOnClick
+        slots={{ toolbar: ShortToolbar, }}
         getRowId={(row) => row._id}
         onRowClick={(p) => setCurrentID(p.row._id)}
       />

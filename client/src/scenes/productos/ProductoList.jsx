@@ -1,33 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, useTheme } from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 
 import { fetchAllProductos } from "../../state/productos";
+import ShortToolbar from "../../components/GridToolbar";
 
-const ProductoList = ({setCurrentID}) => {
+const ProductoList = ({setProductoID}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   
   const dispatch = useDispatch();
   const { productos } = useSelector((state) => state.productos);
-  
-  
-  //const token = useSelector((state) => state.token);
-  /* const isLoading = useSelector((state) => state.isLoading); */
-  // Selected index is saved using ref so as not to cause a re-render
-  //let currentID = useRef(null);
-  // Not the case for formValues, since we need to send it to Form with every change
-  //const [formValues, setFormValues] = useState(null);
-  // We'll try to setFormValues if currentID changes, leaving it null otherwise
-  /* setFormValues(
-    useSelector((state) =>
-      currentID
-    ? state.productos.productos.find((p) => p._id === currentID)
-    : null
-  )
-); */
 
 useEffect(() => {
   dispatch(fetchAllProductos());
@@ -39,11 +24,6 @@ const columns = [
       headerName: "Nombre",
       flex: 1.4,
       cellClassName: "name-column--cell",
-    },
-    {
-      field: "tipo",
-      headerName: "Tipo",
-      flex: 1,
     },
     {
       field: "duracion",
@@ -60,7 +40,7 @@ const columns = [
   return (
     <Box
       m="0"
-      height="80vh"
+      height="78vh"
       sx={{
         "& .MuiDataGrid-root": {
           border: "none",
@@ -91,11 +71,13 @@ const columns = [
       }}
     >
       <DataGrid
+        density="compact"
         rows={productos}
         columns={columns}
-        components={{ Toolbar: GridToolbar }}
+        disableRowSelectionOnClick
+        slots={{ toolbar: ShortToolbar, }}
         getRowId={(row) => row._id}
-        onRowClick={(p) => setCurrentID(p.row._id)}
+        onRowClick={(p) => setProductoID(p.row._id)}
       />
     </Box>
   );

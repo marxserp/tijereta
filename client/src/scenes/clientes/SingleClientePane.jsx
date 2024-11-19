@@ -27,9 +27,8 @@ const SingleClientePane = ({ currentID }) => {
     } else {
         return (
             <Box m="0 0 0 10px" gap="20px">
-                {/* Box A */}
                 <Box>
-                    <Typography p="20px 10px 0px 10px" variant="h4">Detalles</Typography>
+                    <Typography p="20px 10px 0px 10px" variant="h4">Información</Typography>
                     <Box p="20px 10px 0px 10px">
                         <Typography variant="h3" wrap >{`${cliente.nombre} ${cliente.apellido}`}</Typography>
                         <Typography variant="subtitle1">Creado {dayjs(cliente.createdAt).format('DD-MM-YYYY')}</Typography>

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from 'react-router-dom';
-import { selectClienteById, updateCliente, deleteCliente } from "../../state/clientes";
+import { updateCliente, deleteCliente, selectClienteById } from "../../state/clientes";
 
-import { Box, Button, Icon, IconButton, TextField, Typography } from "@mui/material";
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import CleaningServicesOutlinedIcon from '@mui/icons-material/CleaningServicesOutlined';
 import SaveAsOutlinedIcon from '@mui/icons-material/SaveAsOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
@@ -63,7 +63,7 @@ const UpdateClienteForm = () => {
             <Box display="flex" justifyContent="center">
                 <Typography p="20px" variant="body2" wrap>No se encontró cliente, puede que haya sido borrado o eliminado.</Typography>
             </Box>
-        )
+        );
     }
 
     const handleFormSubmit = async (values, onSubmitProps) => {
@@ -240,7 +240,7 @@ const UpdateClienteForm = () => {
                                 Borrar
                             </Button>
                             <Button type="submit" color="secondary" variant="contained" startIcon={<SaveAsOutlinedIcon />}>
-                                Modificar
+                                Guardar
                             </Button>
                         </Box>
                     </Box>

@@ -30,9 +30,13 @@ export const createProducto = createAsyncThunk(
 
 export const updateProducto = createAsyncThunk(
   "productos/updateProducto",
-  async ({ id, producto }) => {
-    const response = await api.updateProducto(id, producto);
-    return response.data;
+  async ({id, producto}) => {
+    try {
+      const response = await api.updateProducto(id, producto);
+      return response.data;
+    } catch (error) {
+      return producto;
+    }
   }
 );
 
@@ -67,9 +71,9 @@ const productosSlice = createSlice({
     })
       .addCase(updateProducto.fulfilled, (state, action) => {
         const productos = state.productos.filter((producto) => producto._id !== action.payload._id);
+        console.log("loggin action.payload from updateProducto.fulfilled", action.payload);
         state.productos = [...productos, action.payload];
       }).addCase(deleteProducto.fulfilled, (state, action) => {
-        // Removés cliente filtrándolo por la id que retorna el thunk
         state.productos = state.productos.filter((producto) => producto._id !== action.payload);
       });
   },
@@ -77,7 +81,6 @@ const productosSlice = createSlice({
 
 // TEST
 export const selectProductoById = (state, productoID) => {
-  console.log("loggin productoID from selectProductoById ", productoID);
   return state.productos.productos.find((producto) => producto._id === productoID);
 };
 

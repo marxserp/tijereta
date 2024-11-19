@@ -1,29 +1,35 @@
 import { useState } from "react";
-import { Box } from "@mui/material";
+import { Link } from 'react-router-dom';
+import { Box, Button, Typography, useTheme } from "@mui/material";
+import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import { tokens } from "../../theme";
-import { useTheme } from "@mui/material";
 import Header from "../../components/Header";
-import AddProductoForm from "./AddProductoForm";
 import ProductoList from "./ProductoList";
-import Sidebar from "../../components/Sidebar";
+import AddProductoForm from "./AddProductoForm";
+import SingleProductoPane from "./SingleProductoPane";
 
 const Productos = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [isSidebar, setIsSidebar] = useState(true);
-  const [currentID, setCurrentID] = useState(0);
+  const [productoID, setProductoID] = useState(0);
 
   return (
-    <Box width="100%" display="flex" position="relative">
-      
-      <Box width="100%" m="20px">
-        <Header title="Productos" subtitle={currentID} />
-        <Box position="relative" display="flex" justifyContent="space-around">
-          <Box flexBasis="30%">
-            <AddProductoForm currentID={currentID} setCurrentID={setCurrentID} />
+    <Box position="relative" display="flex" justifyContent="center" height="91vh" overflow="hidden">
+      <Box width="100%" m="20px 10px 10px 10px">
+        <Box display="flex" justifyContent="start" alignItems="center" p="0 0 20px 0">
+          <Typography variant="h2" fontWeight="bold" m="0 30px 2px 0">Productos</Typography>
+          <Link to={"/productos/nuevo"}>
+            <Button variant="contained" startIcon={<PostAddOutlinedIcon />}>
+              Nuevo producto
+            </Button>
+          </Link>
+        </Box>
+        <Box display="flex" justifyContent="space-around">
+          <Box flexBasis="56%">
+            <ProductoList setProductoID={setProductoID} />
           </Box>
-          <Box flexBasis="60%">
-            <ProductoList setCurrentID={setCurrentID} />
+          <Box flexBasis="44%">
+            <SingleProductoPane productoID={productoID} setProductoID={setProductoID} />
           </Box>
         </Box>
       </Box>

@@ -35,7 +35,6 @@ export const updateCliente = createAsyncThunk(
       const response = await api.updateCliente(id, cliente);
       return response.data;
     } catch (error) {
-      console.log("updateCliente thunk failed, caught ", error);
       return cliente;
     }
   }
@@ -77,6 +76,7 @@ const clientesSlice = createSlice({
       }).addCase(updateCliente.fulfilled, (state, action) => {
         // Eliminás el que tiene datos viejos y concatenás el que tiene datos nuevos
         const clientes = state.clientes.filter((cliente) => cliente._id !== action.payload._id);
+        console.log("loggin action.payload from updateCliente.fulfilled", action.payload);
         state.clientes = [...clientes, action.payload];
       }).addCase(deleteCliente.fulfilled, (state, action) => {
         // Removés cliente filtrándolo por la id que retorna el thunk
