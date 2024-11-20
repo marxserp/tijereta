@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = axios.create({ baseURL: "https://tijereta-server.onrender.com" });
+const API = axios.create({ baseURL: "http://localhost:8000" });
 
 // Verifiy localStorage !!!
 API.interceptors.request.use((req) => {

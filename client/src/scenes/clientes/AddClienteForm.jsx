@@ -56,6 +56,7 @@ const AddClienteForm = () => {
   return (
     <Formik
       onSubmit={handleFormSubmit}
+      initialValues={initialValues}
       validationSchema={valueValidation}
     >
       {({

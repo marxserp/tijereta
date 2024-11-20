@@ -20,20 +20,18 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logIn, signUp } from "./../../state/auth";
 
-// Restricciones
 const registerSchema = yup.object().shape({
-  nombre: yup.string().required("Obligatorio"),
-  apellido: yup.string().required("Obligatorio"),
-  correo: yup.string().email("Correo inválido").required("Obligatorio"),
-  contrasena: yup.string().required("Obligatorio"),
+  nombre: yup.string().required("El nombre es obligatorio."),
+  apellido: yup.string().required("El apellido es obligatorio."),
+  correo: yup.string().email("Formato de correo no válido.").required("Es necesario indicar una dirección de correo."),
+  contrasena: yup.string().required("La contraseña es obligatoria"),
 });
 
 const loginSchema = yup.object().shape({
-  correo: yup.string().email("Correo inválido").required("Obligatorio"),
-  contrasena: yup.string().required("Obligatorio"),
+  correo: yup.string().email("Formato de correo no válido.").required("Debés indicar una dirección de correo."),
+  contrasena: yup.string().required("La contraseña es obligatoria"),
 });
 
-// Inicialización valores por defecto
 const initialValuesRegister = {
   nombre: "",
   apellido: "",
@@ -49,6 +47,11 @@ const initialValuesLogin = {
 const Form = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [nombre, setNombreValue] = useState("");
+  const [apellido, setApellidoValue] = useState("");
+  const [correo, setCorreoValue] = useState("");
+  const [contrasena, setContrasenaValue] = useState("");
 
   const [pageType, setPageType] = useState("login");
   const [showPassword, setShowPassword] = useState(false);
@@ -168,17 +171,16 @@ const Form = () => {
             <Button
               fullWidth
               type="submit"
+              variant="contained"
               sx={{
                 m: "2rem 0",
-                p: "1rem",
-                backgroundColor: palette.primary,
-                color: palette.background.alt,
-                "&:hover": { color: palette.primary.main },
+                p: "1rem"
               }}
             >
               {isLogin ? "Iniciar sesión" : "Registrarse"}
             </Button>
             <Typography
+              align="center"
               onClick={() => {
                 setPageType(isLogin ? "register" : "login");
                 resetForm();
