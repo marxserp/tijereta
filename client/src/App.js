@@ -37,6 +37,7 @@ function App() {
     dispatch(fetchAllClientes());
     dispatch(fetchAllProductos());
     dispatch(fetchAllTurnos());
+    console.log("loggin isauth from useeffect.app.js", isAuth);
   }, []);
 
   function returnElementContent(isAuth, element) {

@@ -21,10 +21,6 @@ import { logIn } from "./../../state/auth";
 const loginSchema = yup.object().shape({
   correo: yup.string().email("Formato de correo no válido.").required("Debés indicar una dirección de correo."),
   contrasena: yup.string().required("La contraseña es obligatoria"),
-  confirmarContrasena: yup
-    .string()
-    .oneOf([yup.ref("contrasena")], "Las contraseñas no coinciden.")
-    .required("Debés confirmar la contraseña"),
 });
 
 const initialValuesLogin = {
@@ -34,22 +30,22 @@ const initialValuesLogin = {
 
 const LoginUsuarioForm = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [correoValue, setCorreoValue] = useState("");
   const [contrasenaValue, setContrasenaValue] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = async (values) => {
     try {
-      dispatch(logIn(values));
-      navigate("/clientes");
+      await dispatch(logIn(values));
+      navigate("/");
     } catch (error) {
       console.log(error);
     } finally {
@@ -109,7 +105,6 @@ const LoginUsuarioForm = () => {
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
-                    aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
                     onMouseDown={handleMouseDownPassword}
                     edge="end"
@@ -120,19 +115,19 @@ const LoginUsuarioForm = () => {
               }
               sx={{ gridColumn: "span 4" }}
             />
-            <Box>
-              <Button
-                fullWidth
-                type="submit"
-                variant="contained"
-                sx={{
-                  m: "2rem 0",
-                  p: "1rem"
-                }}
-              >
-                Iniciar sesión
-              </Button>
-            </Box>
+          </Box>
+          <Box>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{
+                m: "2rem 0",
+                p: "1rem"
+              }}
+            >
+              Iniciar sesión
+            </Button>
           </Box>
         </form>
       )}

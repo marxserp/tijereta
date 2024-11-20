@@ -34,7 +34,16 @@ const registerSchema = yup.object().shape({
     .required("Debés confirmar la contraseña"),
 });
 
+const initialValuesRegister = {
+  nombre: "",
+  apellido: "",
+  correo: "",
+  contrasena: "",
+  confirmarContrasena: "",
+};
+
 const RegisterUsuarioForm = () => {
+  const isNonMobile = useMediaQuery("(min-width:600px)");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -42,6 +51,7 @@ const RegisterUsuarioForm = () => {
   const [apellidoValue, setApellidoValue] = useState("");
   const [correoValue, setCorreoValue] = useState("");
   const [contrasenaValue, setContrasenaValue] = useState("");
+  const [confirmarContrasenaValue, setConfirmarContrasenaValue] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -49,9 +59,9 @@ const RegisterUsuarioForm = () => {
     event.preventDefault();
   };
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = async (values) => {
     try {
-      dispatch(signUp(values, navigate));
+      await dispatch(signUp(values, navigate));
       navigate("/clientes");
     } catch (error) {
       console.log(error);
@@ -63,6 +73,7 @@ const RegisterUsuarioForm = () => {
   return (
     <Formik
       onSubmit={handleFormSubmit}
+      initialValues={initialValuesRegister}
       validationSchema={registerSchema}
     >
       {({
@@ -73,14 +84,19 @@ const RegisterUsuarioForm = () => {
         handleChange,
         handleSubmit,
         setFieldValue,
-        resetForm,
       }) => (
         <form onSubmit={handleSubmit}>
-          <Box>
+          <Box
+            display="grid"
+            gap="20px"
+            gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+            sx={{
+              "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+            }}>
             <TextField
               label="Nombre"
               onBlur={handleBlur}
-              value={contrasenaValue}
+              value={nombreValue}
               onChange={(e) => {
                 setNombreValue(e.target.value);
                 setFieldValue("nombre", e.target.value);
@@ -88,6 +104,7 @@ const RegisterUsuarioForm = () => {
               name="nombre"
               error={Boolean(touched.nombre) && Boolean(errors.nombre)}
               helperText={touched.nombre && errors.nombre}
+              sx={{ gridColumn: "span 4" }}
             />
             <TextField
               label="Apellido"
@@ -100,10 +117,12 @@ const RegisterUsuarioForm = () => {
               name="apellido"
               error={Boolean(touched.apellido) && Boolean(errors.apellido)}
               helperText={touched.apellido && errors.apellido}
+              sx={{ gridColumn: "span 4" }}
             />
             <TextField
               label="Correo"
               onBlur={handleBlur}
+              value={correoValue}
               onChange={(e) => {
                 setCorreoValue(e.target.value);
                 setFieldValue("correo", e.target.value);
@@ -111,6 +130,7 @@ const RegisterUsuarioForm = () => {
               name="correo"
               error={Boolean(touched.correo) && Boolean(errors.correo)}
               helperText={touched.correo && errors.correo}
+              sx={{ gridColumn: "span 4" }}
             />
             <TextField
               label="Contraseña"
@@ -136,19 +156,20 @@ const RegisterUsuarioForm = () => {
                   </IconButton>
                 </InputAdornment>
               }
+              sx={{ gridColumn: "span 4" }}
             />
             <TextField
               label="Confirmar contraseña"
               type={showPassword ? "text" : "password"}
               onBlur={handleBlur}
-              value={contrasenaValue}
+              value={confirmarContrasenaValue}
               onChange={(e) => {
-                setContrasenaValue(e.target.value);
-                setFieldValue("contrasena", e.target.value);
+                setConfirmarContrasenaValue(e.target.value);
+                setFieldValue("confirmarContrasena", e.target.value);
               }}
-              name="contrasena"
-              error={Boolean(touched.contrasena) && Boolean(errors.contrasena)}
-              helperText={touched.contrasena && errors.contrasena}
+              name="confirmarContrasena"
+              error={Boolean(touched.confirmarContrasena) && Boolean(errors.confirmarContrasena)}
+              helperText={touched.confirmarContrasena && errors.confirmarContrasena}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -161,20 +182,21 @@ const RegisterUsuarioForm = () => {
                   </IconButton>
                 </InputAdornment>
               }
+              sx={{ gridColumn: "span 4" }}
             />
-            <Box>
-              <Button
-                fullWidth
-                type="submit"
-                variant="contained"
-                sx={{
-                  m: "2rem 0",
-                  p: "1rem"
-                }}
-              >
-                Registrarse
-              </Button>
-            </Box>
+          </Box>
+          <Box>
+            <Button
+              fullWidth
+              type="submit"
+              variant="contained"
+              sx={{
+                m: "2rem 0",
+                p: "1rem"
+              }}
+            >
+              Registrarse
+            </Button>
           </Box>
         </form>
       )}

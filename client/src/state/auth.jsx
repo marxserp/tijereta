@@ -56,6 +56,7 @@ const authSlice = createSlice({
     builder.addCase(logIn.fulfilled, (state, action) => {
       state.status = "successful";
       localStorage.setItem("profile", JSON.stringify({ ...action?.payload }));
+      console.log("loggin action.payload from login.fulfilled", action.payload);
       state.usuario = action.payload.usuario;
       state.token = action.payload.token;
     });
