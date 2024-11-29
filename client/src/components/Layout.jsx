@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { Box } from "@mui/material";
 import Header from "./Header";
 import Topbar from "./Topbar";
-import Sidebar from "./Sidebar";
+import Sidebar from "./SidebarV2";
 
 const Layout = () => {
     const [isSidebar, setIsSidebar] = useState(true);

@@ -10,10 +10,11 @@ import {
 
 const router = express.Router();
 
+// router.route("/search").get(searchTurno);
+router.route("/:id").patch(updateTurno);
+router.route("/:id").get(getSingleTurno);
+router.route("/:id").delete(deleteTurno);
 router.route("/").post(createTurno);
 router.route("/").get(getAllTurnos);
-router.route("/:id").get(getSingleTurno);
-router.route("/:id").patch(updateTurno);
-router.route("/:id").delete(deleteTurno);
 
 export default router;

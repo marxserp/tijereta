@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API = axios.create({ baseURL: "https://tijereta-server.onrender.com" });
+const baseURL = "https://tijereta-server.onrender.com";
+
+const API = axios.create({ baseURL: "http://localhost:8080" });
 
 // Verifiy localStorage !!!
 API.interceptors.request.use((req) => {
@@ -17,6 +19,7 @@ export const fetchSingleCliente = (id) => API.get(`/clientes/${id}`);
 export const updateCliente = (id, updatedCliente) =>
   API.patch(`/clientes/${id}`, updatedCliente); // Chequear si es conveniente usar PUT o PATCH!
 export const deleteCliente = (id) => API.delete(`/clientes/${id}`);
+export const searchCliente = (query) => API.get(`/clientes/search?query=${query}`);
 
 export const createProducto = (newProducto) =>
   API.post("/productos", newProducto);
@@ -26,6 +29,7 @@ export const fetchSingleProducto = (id) =>
 export const updateProducto = (id, updatedProducto) =>
   API.patch(`/productos/${id}`, updatedProducto);
 export const deleteProducto = (id) => API.delete(`/productos/${id}`);
+export const searchProducto = (query) => API.get(`/productos/search?query=${query}`);
 
 export const createTurno = (newTurno) => API.post("/turnos", newTurno);
 export const fetchAllTurnos = () => API.get("/turnos");

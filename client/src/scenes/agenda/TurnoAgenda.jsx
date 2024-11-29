@@ -1,23 +1,10 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllClientes } from "../../state/clientes";
-import { fetchAllProductos } from "../../state/productos";
+import { useNavigate } from "react-router-dom";
 import { fetchAllTurnos } from "../../state/turnos";
+import { getProductoNombreById } from "../../state/productos";
 
-import {
-  Box,
-  Button,
-  TextField,
-  FormControl,
-  List,
-  ListItem,
-  ListItemText,
-  MenuItem,
-  Select,
-  Typography,
-  useTheme,
-  InputAdornment,
-} from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 
 import FullCalendar, { formatDate } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -31,12 +18,14 @@ const TurnoAgenda = ({ setCurrentID }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
-  // Estado loca, guarda turnos en formato evento para Fullcalendar
+  // Estado local, guarda turnos en formato evento para Fullcalendar
   const [formattedTurnos, setFormattedTurnos] = useState([]);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { turnos } = useSelector((state) => state.turnos);
+  const { productos } = useSelector((state) => state.productos);
 
   /*
   const [filtroProd, setFiltroProd] = useState("");
@@ -47,16 +36,28 @@ const TurnoAgenda = ({ setCurrentID }) => {
   );
  */
 
+  const handleDateClick = (e) => {
+    // Redirigir a AddTurnoForm
+    const currentDate = new Date();
+    if (new Date(e.start) >= currentDate) {
+      navigate("/agenda/nuevo");
+    }
+  };
+
+  const handleEventClick = (e) => {
+    navigate(`/agenda/${e.event._def.publicId}`);
+  };
+
   useEffect(() => {
     dispatch(fetchAllTurnos());
     // Si turno está declarado, mapea turnos a eventos, luego los setea a una const
     if (Array.isArray(turnos)) {
       const formatted = turnos.map((turno) => ({
         id: turno._id,
-        title: turno.producto || "Prod s/nombre",
+        title: getProductoNombreById(productos, turno.id_producto) || "Prod s/nombre",
         start: turno.fecha,
         extendedProps: {
-          cliente: turno.cliente,
+          cliente: turno.id_cliente,
           detalle: turno.detalle,
           observacion: turno.observacion,
         }
@@ -65,68 +66,10 @@ const TurnoAgenda = ({ setCurrentID }) => {
     }
   }, []);
 
-  const handleDateClick = (selected) => {
-    const title = prompt("Ingresar título del nuevo evento");
-    const calendarApi = selected.view.calendar;
-    calendarApi.unselect();
-    if (title) {
-      calendarApi.addEvent({
-        id: `${selected.dateStr}-${title}`,
-        title,
-        start: selected.startStr,
-        end: selected.endStr,
-        allDay: selected.allDay,
-      });
-    }
-  };
-
-  /*
-  const handleEventClick = (selected) => {
-    if (window.confirm(`¿Eliminar evento? '${selected.event.title}'`)) {
-      selected.event.remove();
-    }
-  };
-*/
-
   return (
-    <Box m="20px">
+    <Box m="20px" height="100vh">
       <Box Boxdisplay="flex" justifyContent="space-between">
-        {/* Barra lateral */}
-        <Box
-          flex="1 1 32%"
-          p="12px"
-        >
-          <Typography variant="h5">
-            Próximos
-          </Typography>
-          <List>
-            {currentEvents.map((event) => (
-              <ListItem
-                key={event.id}
-                sx={{
-                  backgroundColor: colors.greenAccent[500],
-                  margin: "10px 0",
-                  borderRadius: "6px",
-                }}
-              >
-                <ListItemText
-                  primary={event.title}
-                  secondary={
-                    <Typography>
-                      {formatDate(event.start, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </Typography>
-                  }
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-
-        <Box flex="1 1 100%" ml="15px">
+        <Box flex="1 1 100%">
           <FullCalendar
             height="70vh"
             plugins={[
@@ -146,7 +89,7 @@ const TurnoAgenda = ({ setCurrentID }) => {
             selectMirror={true}
             dayMaxEvents={true}
             select={handleDateClick}
-            eventClick={(e) => setCurrentID(e.event.id)}
+            eventClick={(e) => handleEventClick(e)}
             eventsSet={(events) => { if (events !== currentEvents) { setCurrentEvents(events) }; }}
             events={formattedTurnos}
           />

@@ -44,37 +44,57 @@ export const getSingleCliente = async (req, res) => {
 export const updateCliente = async (req, res) => {
   const { id } = req.params;
   const { nombre, apellido, contacto, correo } = req.body;
-  console.log("Logging updatedCliente from cliente.controller ", req.body);
-
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No hay un cliente con ID ${id}.`);
-
-  const updatedCliente = {
-    nombre,
-    apellido,
-    contacto,
-    correo,
-    updatedAt: new Date(),
-    _id: id,
-  };
-  await clienteModel.findByIdAndUpdate(id, updatedCliente, { new: true });
-  res.json(updatedCliente);
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No hay un cliente con ID ${id}.`);
+    const updatedCliente = {
+      nombre,
+      apellido,
+      contacto,
+      correo,
+      updatedAt: new Date(),
+      _id: id,
+    };
+    await clienteModel.findByIdAndUpdate(id, updatedCliente, { new: true });
+    res.json(updatedCliente);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// Remover cliente (soft delete)
 export const removeCliente = async (req, res) => {
   const { id } = req.params;
-  if (!req.userId) {
-    return res.json({ message: "Sin autorización: usuario sin autenticar." });
+  const { status = 0 } = req.body;
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No hay clientes con ID ${id}`);
+    const removedCliente = await clienteModel.findByIdAndUpdate(id, { status }, { new: true });
+    if (!removedCliente) return res.status(404).send(`No hay un cliente con ID ${id}.`);
+    res.json(removedCliente);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No hay clientes con ID ${id}`);
-  const cliente = await clienteModel.findById(id);
-  const isRemoved = !cliente.isRemoved;
-  const updatedCliente = await clienteModel.findByIdAndUpdate(id, { isRemoved }, { new: true });
-  res.json(updatedCliente);
 };
 
-// Eliminar cliente (hard delete)
+export const searchClientes = async (req, res) => {
+  const { query, limit = 10 } = req.query;
+  try {
+    const consultaRecortada = query.trim();
+    if (!consultaRecortada) {
+      return res.json([]);
+    }
+    const clientes = await clienteModel.find({
+      $or: [
+        { nombre: { $regex: query, $options: "i" } },
+        { apellido: { $regex: query, $options: "i" } },
+        { contacto: { $regex: query, $options: "i" } }
+      ]
+    }).limit(Number(limit));
+    res.json(clientes);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Quitar
 export const deleteCliente = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No hay clientes con ID ${id}`);

@@ -30,7 +30,7 @@ export const createProducto = createAsyncThunk(
 
 export const updateProducto = createAsyncThunk(
   "productos/updateProducto",
-  async ({id, producto}) => {
+  async ({ id, producto }) => {
     try {
       const response = await api.updateProducto(id, producto);
       return response.data;
@@ -82,6 +82,23 @@ const productosSlice = createSlice({
 // TEST
 export const selectProductoById = (state, productoID) => {
   return state.productos.productos.find((producto) => producto._id === productoID);
+};
+
+export const getProductoNombreById = (productos, productoID) => {
+  const producto = productos.find((producto) => producto._id === productoID);
+  return producto ? producto.nombre : "Producto desconocido o borrado";
+};
+
+export const searchProducto = async (query) => {
+  if (!query) {
+    return ([]);
+  }
+  try {
+    const response = await api.searchProducto(query);
+    return response.data;
+  } catch (error) {
+    return ([]);
+  }
 };
 
 export default productosSlice.reducer;

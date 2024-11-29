@@ -9,8 +9,8 @@ import Layout from "./components/Layout";
 import Login from "./scenes/login";
 
 import Agenda from "./scenes/agenda";
-import AddTurnoForm from "./scenes/agenda/AddTurnoForm";
 import SingleTurnoPage from "./scenes/agenda/SingleTurnoPage";
+import AddTurnoForm from "./scenes/agenda/AddTurnoForm";
 import UpdateTurnoForm from "./scenes/agenda/UpdateTurnoForm";
 
 import Clientes from "./scenes/clientes";
@@ -37,7 +37,6 @@ function App() {
     dispatch(fetchAllClientes());
     dispatch(fetchAllProductos());
     dispatch(fetchAllTurnos());
-    console.log("loggin isauth from useeffect.app.js", isAuth);
   }, []);
 
   function returnElementContent(isAuth, element) {
@@ -53,20 +52,19 @@ function App() {
           <Route path="/auth" element={<Login />} />
 
           <Route path="/" element={isAuth ? <Layout /> : <Navigate to="/auth" />}>
-            <Route index element={<Clientes />} />
+            <Route index element={<Agenda />} />
+            <Route path="agenda">
+              <Route index element={<Agenda />} />
+              <Route path="nuevo" element={<AddTurnoForm />} />
+              <Route path=":turnoID" element={<SingleTurnoPage />} />
+              <Route path="editar/:turnoID" element={<UpdateTurnoForm />} />
+            </Route>
 
             <Route path="clientes">
               <Route index element={<Clientes />} />
               <Route path="nuevo" element={<AddClienteForm />} />
               <Route path=":clienteID" element={<SingleClientePage />} />
               <Route path="editar/:clienteID" element={<UpdateClienteForm />} />
-            </Route>
-
-            <Route path="agenda">
-              <Route index element={<Agenda />} />
-              <Route path="nuevo" element={<AddTurnoForm />} />
-              <Route path=":turnoID" element={<SingleTurnoPage />} />
-              <Route path="editar/:turnoID" element={<UpdateTurnoForm />} />
             </Route>
 
             <Route path="productos">

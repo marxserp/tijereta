@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { setTurnos, createTurno, updateTurno, deleteTurno } from "../../state/turnos";
-// import { createTurno, updateTurno } from "../../api";
-import { isEqual } from 'lodash';
+import { searchProducto } from "../../state/productos";
+import { searchCliente } from "../../state/clientes";
+import useDebouncedSearch from "./debouncer";
+import { debounce, isEqual } from 'lodash';
 
 import { Formik, useFormikContext } from "formik";
 import * as yup from "yup";
@@ -16,19 +19,31 @@ import {
   TextField,
   Typography,
   InputAdornment,
+  IconButton,
+  List,
+  ListItem,
+  Autocomplete,
 } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
+
 import useMediaQuery from "@mui/material/useMediaQuery"
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
+
+const SENA_REGEX = /^[0-9]*\.?[0-9]*$/
+
 const valueValidation = yup.object().shape({
+  sena: yup.string().matches(SENA_REGEX, "Sólo se permiten números."),
   detalle: yup.string().required(),
-  sena: yup.number().required(),
   observacion: yup.string(),
 });
 
 const initialValues = {
-  fecha: dayjs().format('DD-MM-YYYY'),
+  fecha: dayjs(),
   id_cliente: "",
   id_producto: "",
   detalle: "",
@@ -38,69 +53,84 @@ const initialValues = {
   extra: 1,
 };
 
-const FormObserver = ({ turno }) => {
-  const { setValues } = useFormikContext();
-  const [previousTurno, setPreviousTurno] = useState(null);
-  useEffect(() => {
-    // Solo setea valores de Form si turno está definido Y es diferente a previousTurno
-    if (turno && (turno && (!previousTurno || !isEqual(turno, previousTurno)))) {
-      setValues({
-        detalle: turno.detalle,
-        sena: turno.sena,
-        observacion: turno.observacion,
-      });
-      // Seguimiento de turno actual para evitar que se ejecute nuevamente
-      setPreviousTurno(turno);
-    }
-    // Solo revisa turno y setValues para evitar bucle infinito
-  }, [turno, setValues]);
-
-  return null;
-};
-
 const AddTurnoForm = ({ currentID, setCurrentID }) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const _id = useSelector((state) => state.auth.usuario._id);
-
   const turno = useSelector((state) =>
     currentID ? state.turnos.turnos.find((turno) => turno._id === currentID) : null
   );
-  const { productos } = useSelector((state) => state.productos);
-  const { clientes } = useSelector((state) => state.clientes);
 
   // Estado local que guarda id/fecha de elemento/fecha seleccionado
-  const [selectedProdID, setSelectedProdID] = useState("");
+  const [selectedDateValue, setSelectedDateValue] = useState();
+  const [clientes, setClientes] = useState([]);
   const [selectedClienID, setSelectedClienID] = useState("");
-  const [selectedDateValue, setSelectedDateValue] = useState(dayjs().format('DD-MM-YYYY'));
+  const [productos, setProductos] = useState([]);
+  const [selectedProdID, setSelectedProdID] = useState("");
+  const [sena, setSena] = useState(0);
+  const [extra, setExtra] = useState(1);
 
-  useEffect(() => {
-    if (turno !== 0 && turno !== null) {
-      console.log("Setting cliente and producto IDs, logging turno.fecha: ", turno.fecha)
-      setSelectedDateValue(dayjs(turno.fecha).format('DD-MM-YYYY'));
-      setSelectedClienID(turno.cliente);
-      setSelectedProdID(turno.producto);
+  const searchClienFunc = async (query) => {
+    if (!query) return [];
+    try {
+      const response = await searchCliente(query);
+      return response;
+    } catch (error) {
+      console.error("Error fetching clients", error);
+      return [];
     }
-  }, [turno]);
+  };
+
+  const searchProductoFunc = async (query) => {
+    if (!query) return [];
+    try {
+      const response = await searchProducto(query);
+      return response;
+    } catch (error) {
+      console.error("Error fetching clients", error);
+      return [];
+    }
+  };
+  const debouncedSearchClienFunc = useDebouncedSearch(searchClienFunc);
+  const debouncedSearchProdFunc = useDebouncedSearch(searchProductoFunc);
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    const formData = new URLSearchParams(values);
-    formData.append("usuario", _id);
-    if (currentID === 0 || currentID === null) {
+    try {
+      const formData = new URLSearchParams(values);
+      formData.append("usuario", _id);
       dispatch(createTurno(formData));
-    } else {
-      dispatch(updateTurno(currentID, formData));
-    };
-  }
+      navigate("/agenda");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // Implementar estado de app en almacén
+      console.log("finally");
+    } 
+  };
 
   const handleDelete = async () => {
+    dispatch(deleteTurno(currentID));
+    navigate("/agenda");
+  };
 
-    if (currentID !== 0 && currentID !== null) {
-      dispatch(deleteTurno(currentID));
+  const handleClear = (resetForm) => {
+    setSelectedDateValue(dayjs());
+    setSelectedClienID(null);
+    setSelectedProdID(null);
+    setSena(null);
+    setExtra(null);
+    resetForm();
+  };
+
+  /*
+  useEffect(() => {
+    if (turno !== 0 && turno !== null) {
+      setSelectedDateValue(dayjs(turno.fecha).format('DD-MM-YYYY'));
     }
-    setCurrentID(0);
-  }
+  }, [turno]);
+  */
 
   return (
     <Formik
@@ -114,13 +144,18 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
         handleChange,
         handleSubmit,
         resetForm,
-        setFieldValue
+        setFieldValue,
       }) => (
         <form onSubmit={handleSubmit}>
+          <Box display="flex" justifyContent="start" alignItems="center" p="0 0 20px 0" m="20px 10px 10px 10px">
+            <IconButton onClick={() => navigate(-1)}>
+              <ArrowBackIcon />
+            </IconButton>
+            <Typography variant="h2" fontWeight="bold" m="0 30px 2px 0">Detalles del turno</Typography>
+          </Box>
           <Box
             display="grid"
-            gap="30px"
-            gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+            gap="30px" m="40px 20px 20px 20px" gridTemplateColumns="repeat(4, minmax(0, 1fr))"
             sx={{
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
             }}
@@ -130,66 +165,114 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
               label="Elegí una fecha"
               value={selectedDateValue}
               onChange={(e) => { setSelectedDateValue(e ? dayjs(e).toDate() : ''); setFieldValue("fecha", e ? dayjs(e).toDate() : '') }}
-              defaultValue={dayjs().format('DD-MM-YYYY')}
+              defaultValue={dayjs()}
+              minDate={dayjs()}
               sx={{ gridColumn: "span 2" }}
             />
-            <FormControl sx={{ gridColumn: "span 4" }}>
-              <InputLabel id="clienteLabel">Elegí un cliente</InputLabel>
+            <FormControl fullWidth>
+              <InputLabel id="extra">Estado del turno</InputLabel>
               <Select
-                name="id_cliente"
-                value={selectedClienID}
-                label="Elegí un cliente"
-                onChange={(e) => { { setSelectedClienID(e.target.value); setFieldValue("id_cliente", e.target.value); } }}>
-                {clientes.map((cliente) => (
-                  <MenuItem value={cliente._id}>
-                    <Typography>{cliente.nombre}</Typography>
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl sx={{ gridColumn: "span 4" }}>
-              <InputLabel id="productoLabel">Elegí un producto</InputLabel>
-
-              <Select
-                name="id_producto"
-                value={selectedProdID}
-                label="Elegí un producto"
-                onChange={(e) => { { setSelectedProdID(e.target.value); setFieldValue("id_producto", e.target.value); } }}
-                sx={{ gridColumn: "span 4" }}>
-                {productos.map((producto) => (
-                  <MenuItem value={producto._id}>
-                    <Typography>{producto.nombre}</Typography>
-                  </MenuItem>
-                ))}
+                id="extra"
+                name="extra"
+                label="Estado del turno"
+                value={extra}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setExtra(value);
+                  setFieldValue("extra", value);
+                }}
+                sx={{ gridColumn: "span 1" }}
+              >
+                <MenuItem value={1}>Activo</MenuItem>
+                <MenuItem value={2}>Pendiente</MenuItem>
+                <MenuItem value={3}>Pospuesto</MenuItem>
+                <MenuItem value={4}>Finalizado</MenuItem>
+                <MenuItem value={5}>Cancelado</MenuItem>
               </Select>
             </FormControl>
 
             <TextField
-              fullWidth
-              variant="filled"
-              type="number"
+              variant="outlined"
               label="Seña"
-
-              onChange={handleChange}
-              value={values.sena}
+              onChange={
+                (e) => {
+                  const value = e.target.value;
+                  if (value === "" || /^[0-9]*\.?[0-9]*$/.test(value)) {
+                    setSena(value);
+                    setFieldValue("sena", value);
+                  }
+                }
+              }
+              value={sena}
               name="sena"
-              error={!!touched.sena && !!errors.sena}
-              helperText={touched.sena && errors.sena}
+              helperText="Sólo admite números"
               InputProps={{
+                inputMode: "decimal", pattern: "[0-9]*",
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
                 ),
               }}
-              sx={{ gridColumn: "span 2" }}
+              sx={{ gridColumn: "span 1" }}
+            />
+
+            <Autocomplete
+              options={clientes}
+              getOptionLabel={(option) => option.nombre || ""}
+              onInputChange={(event, value) => {
+                if (value) {
+                  debouncedSearchClienFunc(value, setClientes);
+                } else {
+                  setClientes([]);
+                }
+              }}
+              onChange={(event, value) => {
+                setSelectedClienID(value?._id || "");
+                setFieldValue("id_cliente", value?._id || ""); // Synchronize with Formik
+              }}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+              renderInput={(params) => (
+                <TextField {...params} label="Buscá un cliente" variant="outlined" />
+              )}
+              renderOption={(props, option) => (
+                <Box {...props} key={option._id}>
+                  {option.nombre}
+                </Box>
+              )}
+              sx={{ gridColumn: "span 4" }}
+            />
+
+            <Autocomplete
+              options={productos}
+              getOptionLabel={(option) => option.nombre || ""}
+              onInputChange={(event, value) => {
+                if (value) {
+                  debouncedSearchProdFunc(value, setProductos);
+                } else {
+                  setProductos([]);
+                }
+              }}
+              onChange={(event, value) => {
+                setSelectedProdID(value?._id || "");
+                setFieldValue("id_producto", value?._id || ""); // Synchronize with Formik
+              }}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+              renderInput={(params) => (
+                <TextField {...params} label="Elegí  un producto" variant="outlined" />
+              )}
+              renderOption={(props, option) => (
+                <Box {...props} key={option._id}>
+                  {option.nombre}
+                </Box>
+              )}
+              sx={{ gridColumn: "span 4" }}
             />
 
             <TextField
               fullWidth
-              variant="filled"
+              variant="outlined"
               type="text"
               label="Detalles"
-
+              multiline
               onChange={handleChange}
               value={values.detalle}
               name="detalle"
@@ -200,10 +283,10 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
 
             <TextField
               fullWidth
-              variant="filled"
+              variant="outlined"
               type="text"
               label="Observaciones"
-
+              multiline
               onChange={handleChange}
               value={values.observacion}
               name="observacion"
@@ -211,26 +294,18 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
               helperText={touched.observacion && errors.observacion}
               sx={{ gridColumn: "span 4" }}
             />
-
-            <Typography>Estado placeholder</Typography>
-            <Typography>Extra placeholder</Typography>
-
-            {/* CLIENT PICKER */}
-
+            <Box display="flex" justifyContent="end" mt="20px">
+              <IconButton color="primary" onClick={() => handleClear(resetForm)}>
+                <CleaningServicesIcon />
+              </IconButton>
+              <Button variant="outlined" onClick={() => handleDelete()} startIcon={<DeleteOutlinedIcon />}>Eliminar</Button>
+              <Button type="submit" color="primary" variant="contained" startIcon={<SaveOutlinedIcon />}>Guardar</Button>
+            </Box>
           </Box>
-          <Box display="flex" justifyContent="end" mt="20px" columnGap="6px">
-            <Button variant="text" onClick={() => { resetForm(); setCurrentID(0); }}>
-              Limpiar todo
-            </Button>
-            <Button variant="text" onClick={() => handleDelete()}>Eliminar</Button>
-            <Button type="submit" color="secondary" variant="contained">
-              Guardar
-            </Button>
-          </Box>
-          <FormObserver turno={turno} />
         </form>
-      )}
-    </Formik>
+      )
+      }
+    </Formik >
   );
 };
 

@@ -1,4 +1,4 @@
-COMENTARIOS
+tCOMENTARIOS
 correcciones:
 registro validacion de contraseña, correo, confirmación por correo
 expresiones regulares para datos enviados a la base

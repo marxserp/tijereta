@@ -23,7 +23,8 @@ const Clientes = () => {
             </Button>
           </Link>
         </Box>
-        <Box display="flex" flex="1" justifyContent="space-around" overflow="auto" >
+
+        <Box display="flex" flex="1" justifyContent="space-around" overflow="auto">
           <Box flexBasis="55%" overflow="auto">
             <ClienteList setCurrentID={setCurrentID} />
           </Box>

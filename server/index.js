@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 // Rutas
 app.use("/auth", authRouter);
 app.use("/turnos", turnoRouter);
-app.use("/productos", productoRouter);
+app.use('/productos', productoRouter);
 app.use("/clientes", clienteRouter);
 
 // Mangosta

@@ -12,20 +12,20 @@ import { Box, Typography, Button, List, ListItem, ListItemText, IconButton, useT
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import dayjs from "dayjs";
 
-const SingleClientePage = () => {
+const SingleProductoPage = () => {
     const navigate = useNavigate();
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
-    const { clienteID } = useParams();
-    const cliente = useSelector((state) => selectClienteById(state, clienteID));
+    const { productoID } = useParams();
+    const producto = useSelector((state) => selectProductoById(state, productoID));
     const turnos = useSelector((state) => selectClienteFutureTurnos(state, clienteID));
-    const productos = useSelector((state) => turnos.map(turno => selectProductoById(state, turno.id_producto)));
+    //const clientes = useSelector((state) => turnos.map(turno => selectProductoById(state, turno.id_producto)));
 
-    if (!cliente) {
+    if (!producto) {
         return (
             <Box position="relative" display="flex" justifyContent="center" alignItems="center" height="91vh">
-                <Typography p="20px" variant="body2" textAlign="center" wrap>Cliente no encontrado</Typography>
+                <Typography p="20px" variant="body2" textAlign="center" wrap>Producto no encontrado</Typography>
             </Box>
         );
     } else {
@@ -36,7 +36,7 @@ const SingleClientePage = () => {
                         <IconButton onClick={() => navigate(-1)}>
                             <ArrowBackIcon />
                         </IconButton>
-                        <Typography variant="h2" fontWeight="bold" m="0 30px 2px 0">Detalles del cliente</Typography>
+                        <Typography variant="h2" fontWeight="bold" m="0 30px 2px 0">Detalles del turno</Typography>
                     </Box>
                     <Box p="20px 10px 10px 10px" position="relative" display="flex" flexDirection="column" height="16vh">
                         <Typography variant="h2">{`${cliente.nombre} ${cliente.apellido}`}</Typography>
@@ -52,38 +52,35 @@ const SingleClientePage = () => {
                     </Box>
                     <Box p="20px 10px 10px 10px">
                         <Typography p="10px 0 0 0" variant="h5">Próximos turnos activos</Typography>
-                        {turnos.length ==! 0 ?
-                            <List>
-                                {turnos.map((turno, index) => (
-                                    <ListItem
-                                        alignItems="flex-start"
-                                        key={turno._id}
-                                        sx={{
-                                            backgroundColor: colors.greenAccent[500],
-                                            margin: "10px 0",
-                                            borderRadius: "6px",
-                                        }}
-                                    >
-                                        <ListItemText
-                                            primary={productos[index] ? productos[index].nombre : 'Producto no encontrado'}
-                                            secondary={
-                                                <React.Fragment>
-                                                    <Typography
-                                                        component="span"
-                                                        variant="body2"
-                                                        display="inline"
-                                                    >
-                                                        {`Seña: ${turno.sena}`}
-                                                    </Typography>
-                                                    {` | Detalles: ${turno.detalle}`}
-                                                </React.Fragment>
-                                            }
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List> :
-                            <Typography variant="body">Este cliente no tiene turnos activos cargados</Typography>
-                        }
+                        <List>
+                            {turnos.map((turno, index) => (
+                                <ListItem
+                                    alignItems="flex-start"
+                                    key={turno._id}
+                                    sx={{
+                                        backgroundColor: colors.greenAccent[500],
+                                        margin: "10px 0",
+                                        borderRadius: "6px",
+                                    }}
+                                >
+                                    <ListItemText
+                                        primary={productos[index] ? productos[index].nombre : 'Producto no encontrado'}
+                                        secondary={
+                                            <React.Fragment>
+                                                <Typography
+                                                    component="span"
+                                                    variant="body2"
+                                                    display="inline"
+                                                >
+                                                    {`Seña: ${turno.sena}`}
+                                                </Typography>
+                                                {` | Detalles: ${turno.detalle}`}
+                                            </React.Fragment>
+                                        }
+                                    />
+                                </ListItem>
+                            ))}
+                        </List>
                     </Box>
                 </Box>
             </Box>
@@ -91,4 +88,4 @@ const SingleClientePage = () => {
     };
 };
 
-export default SingleClientePage;
+export default SingleProductoPage;

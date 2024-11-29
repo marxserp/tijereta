@@ -8,8 +8,8 @@ const turnoSchema = mongoose.Schema(
     detalle: { type: String, required: true },
     sena: { type: Number, default: 1 },
     observacion: { type: String, required: true },
-    estado: { type: Number, default: 1 },
-    extra: { type: Boolean, default: 1 },
+    estado: { type: Boolean, default: 1 },
+    extra: { type: Number, default: 1 },
     usuario: { type: String, required: true },
   },
   { timestamps: true }
