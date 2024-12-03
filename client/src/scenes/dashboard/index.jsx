@@ -11,8 +11,22 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import ChecklistIcon from '@mui/icons-material/Checklist';
 import { tokens } from "../../theme";
 
+import UsuarioCard from "./UsuarioCard";
+import { fetchSingleUsuario } from "../../services/auth"
+
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  const [usuario, setUsuario] = useState(null);
+  const userId = useSelector((state) => state.auth.usuario._id);
+
+  useEffect(() => {
+    const getUsuarioData = async () => {
+      const data = await fetchSingleUsuario(userId);
+      setUsuario(data);
+    };
+    getUsuarioData();
+  }, [userId]);
 
   return (
     <Box position="relative" display="flex" justifyContent="center" height="92vh" overflow="hidden">
@@ -21,7 +35,7 @@ const Dashboard = () => {
           <Typography variant="h2" fontWeight="bold" m="0 30px 2px 0">Inicio</Typography>
         </Box>
 
-
+        {usuario ? <UsuarioCard usuario={usuario} /> : <p>Loading...</p>}
       </Box>
     </Box>
   );

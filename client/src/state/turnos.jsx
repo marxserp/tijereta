@@ -88,6 +88,11 @@ export const selectTurnoById = (state, turnoID) => {
 /*export const selectClienteNextTurno = (state, clienteID) => {
   return  state.turnos.turnos.find((turno) => turno.id_cliente === clienteID);
 };*/
+export const selectAllClienteTurnos = (state, clienteID) => {
+  return state.turnos.turnos.
+    filter(turno => turno.id_cliente === clienteID).
+    sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+};
 
 export const selectClienteNextTurno = (state, clienteID) => {
   const currentDate = new Date();
@@ -106,5 +111,16 @@ export const selectClienteFutureTurnos = (state, clienteID) => {
     filter(turno => turno.id_cliente === clienteID && new Date(turno.fecha) >= currentDate).
     sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 };
+
+export const selectTurnosPastMonthTotal = (state) => {
+  const currentDate = new Date();
+  // Obtiene la diferencia de fechas, luego suma el valor del campo "total"
+  const oneMonthAgo = new Date(currentDate);
+  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+  return state.turnos.turnos
+    .filter(turno => new Date(turno.fecha) >= oneMonthAgo && new Date(turno.fecha) <= currentDate)
+    .reduce((sum, turno) => sum + turno.total, 0);
+};
+
 
 export default turnosSlice.reducer;

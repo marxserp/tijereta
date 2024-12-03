@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setTurnos, createTurno, updateTurno, deleteTurno } from "../../state/turnos";
-import { searchProducto } from "../../state/productos";
-import { searchCliente } from "../../state/clientes";
+import { searchProducto } from "../../services/productos";
+import { searchCliente } from "../../services/clientes";
 import useDebouncedSearch from "./debouncer";
 import { debounce, isEqual } from 'lodash';
 

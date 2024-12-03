@@ -37,9 +37,11 @@ export const updateTurno = (id, updatedTurno) =>
   API.patch(`/turnos/${id}`, updatedTurno);
 export const deleteTurno = (id) => API.delete(`/turnos/${id}`);
 export const getTopBuyers = () => API.get("/turnos/top");
+export const getTopServices = () => API.get("/turnos/topservice");
 export const getTurnosByExtra = (query) => API.get(`/turnos/filterget?query=${query}`);
 
 export const register = (formData) => API.post("/auth/register", formData);
 export const login = (formData) => API.post("/auth/login", formData);
 export const verify = (formData) => API.post("/auth/verification", formData);
 export const adm = (formData) => API.post("/auth/novaUAuth", formData);
+export const fetchSingleUsuario = (id) => API.get(`/auth/usuario/${id}`);

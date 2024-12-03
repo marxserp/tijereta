@@ -100,6 +100,29 @@ export const getTopBuyers = async (req, res) => {
   }
 };
 
+export const getTopServices = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const filtros = [
+      { $match: { estado: true, usuario: userId } },
+      { $project: { productos: ["$id_producto", "$id_producto2", "$id_producto3"] } },
+      { $unwind: "$productos" },
+      { $group: { _id: "$productos", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 3 },
+    ];
+    const topProductos = await turnoModel.aggregate(filtros);
+
+    if (topProductos.length === 0) {
+      return res.status(404).json({ message: "No hay turnos activos" });
+    }
+
+    res.status(200).json(topProductos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const getTurnosByExtra = async (req, res) => {
   const { query } = req.body;
   const userId = req.user.id;

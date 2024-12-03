@@ -99,6 +99,16 @@ export const login = async (req, res) => {
     delete usuarioObjeto.contrasena;
     res.status(200).json({ token, usuario: usuarioObjeto });
   } catch (error) {
-    res.status(500).json({ msg: "Internal server error" });
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getSingleUsuario = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const usuario = await usuarioModel.findById(userId);
+    res.status(200).json(usuario);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

@@ -97,17 +97,5 @@ export const selectClienteById = (state, clienteID) => {
   return state.clientes.clientes.find((cliente) => cliente._id === clienteID);
 };
 
-export const searchCliente = async (query) => {
-  if (!query) {
-    return ([]);
-  }
-  try {
-    const response = await api.searchCliente(query);
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    return ([]);
-  }
-};
 
 export default clientesSlice.reducer;

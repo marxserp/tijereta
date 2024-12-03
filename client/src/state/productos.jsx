@@ -97,16 +97,4 @@ export const getProductoNombreById = (productos, productoID) => {
   return producto ? producto.nombre : "Producto desconocido o borrado";
 };
 
-export const searchProducto = async (query) => {
-  if (!query) {
-    return ([]);
-  }
-  try {
-    const response = await api.searchProducto(query);
-    return response.data;
-  } catch (error) {
-    return ([]);
-  }
-};
-
 export default productosSlice.reducer;
