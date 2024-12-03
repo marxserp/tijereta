@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
-import Form from "./Form";
 
 import tijereta from "../../resources/tijeretaAlt.png";
 import LoginUsuarioForm from "./LoginUsuarioForm";
@@ -8,9 +7,9 @@ import RegisterUsuarioForm from "./RegisterUsuarioForm";
 
 const Auth = () => {
   const theme = useTheme();
-  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+  const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  const [isLogin, toggleIsLogin] = useState(false);
+  const [isLogin, toggleIsLogin] = useState(true);
 
   return (
     <Box
@@ -36,11 +35,10 @@ const Auth = () => {
       </Box>
 
       <Box
-        width="24rem"
-        p="1.5rem"
+        sx={{ width: isNonMobile ? "46%" : "84%" }}
         m="2rem auto"
       >
-        <Typography align="center" fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
+        <Typography align="center" fontWeight="500" variant="h5">
           Completá los datos para Seguir
         </Typography>
         {isLogin ? <LoginUsuarioForm toggleIsLogin={toggleIsLogin} /> : <RegisterUsuarioForm toggleIsLogin={toggleIsLogin} />}

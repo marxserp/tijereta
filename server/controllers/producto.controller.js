@@ -2,14 +2,15 @@ import mongoose from "mongoose";
 import productoModel from "../models/producto.model.js";
 
 export const createProducto = async (req, res) => {
-  const { nombre, descripcion, duracion, precio, usuario } = req.body;
+  const { nombre, detalle, duracion, precio, promo } = req.body;
   try {
     const newProducto = new productoModel({
       nombre,
-      descripcion,
+      detalle,
       duracion,
       precio,
-      usuario,
+      promo,
+      usuario: req.user.id
     });
     await newProducto.save();
     res.status(201).json(newProducto);
@@ -41,11 +42,14 @@ export const getSingleProducto = async (req, res) => {
 
 export const updateProducto = async (req, res) => {
   const { id } = req.params;
-  const { nombre, duracion, precio } = req.body;
+  const { nombre, detalle, duracion, precio, promo } = req.body;
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No hay un producto con ID ${id}.`);
-
-    const updatedProducto = { nombre, duracion, precio };
+    const producto = await productoModel.findById(id);
+    if (!producto || producto.usuario.toString() !== req.user.id) {
+      return res.status(403).send("Sin autorización para actualizar cliente");
+    }
+    const updatedProducto = { nombre, detalle, duracion, precio, promo };
     await productoModel.findByIdAndUpdate(id, updatedProducto, { new: true });
     res.json(updatedProducto);
   } catch (error) {
@@ -72,7 +76,9 @@ export const searchProducto = async (req, res) => {
   const { query, limit = 10 } = req.query;
   try {
     const productos = await productoModel.find({
-      nombre: { $regex: query, $options: "i" }
+      $or: [
+        { nombre: { $regex: query, $options: "i" } }
+      ]
     }).limit(Number(limit));
     res.json(productos);
   } catch (error) {

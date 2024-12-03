@@ -1,11 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import * as api from "../api/index.js";
+import * as api from "../services/api.js";
 
 const initialState = {
   mode: "light",
-  sidebar: true,
-  usuario: null,
   token: null,
+  usuario: null,
   status: "idle",
   error: null,
 };
@@ -26,7 +25,19 @@ export const signUp = createAsyncThunk(
   "auth/signUp",
   async (formData, thunkAPI) => {
     try {
-      const response = await api.login(formData);
+      const response = await api.register(formData);
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue({ error: err.message });
+    }
+  }
+);
+
+export const verify = createAsyncThunk(
+  "auth/verify",
+  async (formData, thunkAPI) => {
+    try {
+      const response = await api.verify(formData);
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue({ error: err.message });
@@ -38,11 +49,11 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    /* setLogin: (state, action) => {
+    setLogin: (state, action) => {
       localStorage.setItem("profile", JSON.stringify({ ...action?.payload }));
-      state.usuario = action.payload.usuario;
       state.token = action.payload.token;
-    }, */
+      state.usuario = action.payload.usuario;
+    },
     setLogout: (state) => {
       localStorage.clear();
       state.usuario = null;
@@ -55,6 +66,8 @@ const authSlice = createSlice({
     });
     builder.addCase(logIn.fulfilled, (state, action) => {
       state.status = "successful";
+      //thunkAPI.dispatch(authSlice.actions.setLogin(action.payload));
+
       localStorage.setItem("profile", JSON.stringify({ ...action?.payload }));
       console.log("loggin action.payload from login.fulfilled", action.payload);
       state.usuario = action.payload.usuario;

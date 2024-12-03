@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, Box, Typography } from "@mui/material";
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, Box, Typography, Tooltip } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
@@ -14,27 +14,29 @@ const SidebarItem = ({ title, to, icon, selected, setSelected }) => {
   const isSelected = selected === title;
 
   return (
-    <ListItem
-      button
-      component={Link}
-      to={to}
-      onClick={() => setSelected(title)}
-      sx={{
-        color: isSelected ? theme.palette.primary.main : theme.palette.text.primary,
-        "&:hover": {
-          backgroundColor: theme.palette.action.hover,
-        },
-      }}
-    >
-      <ListItemIcon
+    <Tooltip title={title}>
+      <ListItem
+        button
+        component={Link}
+        to={to}
+        onClick={() => setSelected(title)}
         sx={{
-          color: isSelected ? theme.palette.primary.main : theme.palette.text.secondary,
+          color: isSelected ? theme.palette.primary.main : theme.palette.text.primary,
+          "&:hover": {
+            backgroundColor: theme.palette.action.hover,
+          },
         }}
       >
-        {icon}
-      </ListItemIcon>
-      <ListItemText primary={title} />
-    </ListItem>
+        <ListItemIcon
+          sx={{
+            color: isSelected ? theme.palette.primary.main : theme.palette.text.secondary,
+          }}
+        >
+          {icon}
+        </ListItemIcon>
+        <ListItemText primary={title} />
+      </ListItem>
+    </Tooltip>
   );
 };
 
@@ -70,9 +72,11 @@ const Sidebar = () => {
           p={1}
           borderBottom={`1px solid ${theme.palette.divider}`}
         >
-          <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
-            {isCollapsed ? <MenuRoundedIcon /> : <MenuOpenRoundedIcon />}
-          </IconButton>
+          <Tooltip title="Menú">
+            <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+              {isCollapsed ? <MenuRoundedIcon /> : <MenuOpenRoundedIcon />}
+            </IconButton>
+          </Tooltip>
           {!isCollapsed && (
             <Typography variant="h6" color="textPrimary" m="0 0 0 30px">
               Menú

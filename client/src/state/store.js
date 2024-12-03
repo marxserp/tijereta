@@ -1,5 +1,7 @@
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
   persistReducer,
+  persistStore,
   FLUSH,
   REHYDRATE,
   PAUSE,
@@ -8,9 +10,6 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-// import { authSlice } from ".";
-// import authReducer from "./index";
 import authReducer from "./auth.jsx";
 import clientesReducer from "./clientes.jsx";
 import productosReducer from "./productos.jsx";
@@ -38,4 +37,5 @@ const store = configureStore({
     }),
 });
 
-export default store;
+const persistor = persistStore(store);
+export { store, persistor };

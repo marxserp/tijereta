@@ -1,19 +1,27 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import { createCliente } from "../../state/clientes";
 
-import { Box, Button, TextField } from "@mui/material";
+import { Typography, TextField, Box, Button, IconButton, Tooltip } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
+import { DatePicker } from "@mui/x-date-pickers";
 import { Formik } from "formik";
 import * as yup from "yup";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import dayjs from "dayjs";
+
+import { createCliente } from "../../state/clientes";
 
 const valueValidation = yup.object().shape({
   nombre: yup.string().required("Campo obligatorio"),
   apellido: yup.string(),
   correo: yup.string().email("Formato de correo no válido"),
-  contacto: yup.number("Solo se admiten números").required("Campo obligatorio"),
+  contacto: yup.number("Solo se admiten números").required("Campo obligatorio").positive("Caracteres inválidos").integer("Caracteres inválidos"),
+  
+  direccion: yup.string(),
+  observacion: yup.string(),
 });
 
 const initialValues = {
@@ -21,6 +29,9 @@ const initialValues = {
   apellido: "",
   correo: "",
   contacto: "",
+  fechaNacimiento: dayjs(),
+  direccion: "",
+  observacion: "",
 };
 
 const AddClienteForm = () => {
@@ -29,12 +40,15 @@ const AddClienteForm = () => {
   const navigate = useNavigate();
 
   const _id = useSelector((state) => state.auth.usuario._id);
-  const token = useSelector((state) => state.auth.token);
+  // const token = useSelector((state) => state.auth.token);
 
   const [nombreValue, setNombreValue] = useState("");
   const [apellidoValue, setApellidoValue] = useState("");
   const [correoValue, setCorreoValue] = useState("");
   const [contactoValue, setContactoValue] = useState("");
+  const [fechaNacValue, setFechaNacValue] = useState(dayjs());
+  const [direccionValue, setDireccionValue] = useState("");
+  const [observacionValue, setObservacionValue] = useState("");
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     try {
@@ -45,6 +59,8 @@ const AddClienteForm = () => {
       setApellidoValue("");
       setCorreoValue("");
       setContactoValue("");
+      setDireccionValue("");
+      setObservacionValue("");
       navigate("/clientes");
     } catch (error) {
       console.log(error);
@@ -53,34 +69,39 @@ const AddClienteForm = () => {
     }
   };
 
+  const handleClear = (resetForm) => {
+    setNombreValue("");
+    setApellidoValue("");
+    setCorreoValue("");
+    setContactoValue("");
+    setDireccionValue("");
+    setObservacionValue("");
+    setFechaNacValue(dayjs());
+    resetForm();
+  };
+
   return (
-    <Formik
-      onSubmit={handleFormSubmit}
-      initialValues={initialValues}
-      validationSchema={valueValidation}
-    >
-      {({
-        values,
-        errors,
-        touched,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        resetForm,
-        setFieldValue,
-      }) => (
+    <Formik onSubmit={handleFormSubmit} initialValues={initialValues} >
+      {({ values, errors, touched, handleBlur, handleChange, handleSubmit, resetForm, setFieldValue, }) => (
         <form onSubmit={handleSubmit}>
+          <Box display="flex" justifyContent="start" alignItems="center" m="20px 10px 10px 10px">
+            <Tooltip title="Volver">
+              <IconButton onClick={() => navigate(-1)}>
+                <ArrowBackIcon />
+              </IconButton>
+            </Tooltip>
+            <Typography variant="h2" fontWeight="bold">Nuevo cliente</Typography>
+          </Box>
           <Box
             display="grid"
-            gap="30px"
-            gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+            gap="30px" m="40px 20px 20px 20px" gridTemplateColumns="repeat(4, minmax(0, 1fr))"
             sx={{
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
             }}
           >
             <TextField
-              fullWidth
-              variant="filled"
+              size="small"
+              variant="outlined"
               type="text"
               label="Nombre"
               onBlur={handleBlur}
@@ -95,8 +116,8 @@ const AddClienteForm = () => {
               sx={{ gridColumn: "span 2" }}
             />
             <TextField
-              fullWidth
-              variant="filled"
+              size="small"
+              variant="outlined"
               type="text"
               label="Apellido"
               onBlur={handleBlur}
@@ -110,8 +131,29 @@ const AddClienteForm = () => {
               sx={{ gridColumn: "span 2" }}
             />
             <TextField
-              fullWidth
-              variant="filled"
+              size="small"
+              variant="outlined"
+              type="text"
+              label="Número de contacto"
+              onBlur={handleBlur}
+              value={contactoValue}
+              onChange={
+                (e) => {
+                  const value = e.target.value;
+                  if (value === "" || /^[0-9]*\.?[0-9]*$/.test(value)) {
+                    setContactoValue(e.target.value);
+                    setFieldValue("contacto", e.target.value);
+                  }
+                }
+              }
+              name="contacto"
+              error={!!touched.contacto && !!errors.contacto}
+              helperText={touched.contacto && errors.contacto}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <TextField
+              size="small"
+              variant="outlined"
               type="text"
               label="Correo electrónico"
               onBlur={handleBlur}
@@ -123,32 +165,62 @@ const AddClienteForm = () => {
               name="correo"
               error={!!touched.correo && !!errors.correo}
               helperText={touched.correo && errors.correo}
-              sx={{ gridColumn: "span 4" }}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <DatePicker
+              slotProps={{ textField: { size: 'small' } }}
+              label="Fecha de nacimiento"
+              value={fechaNacValue}
+              onChange={(e) => { setFechaNacValue(e ? dayjs(e).toDate() : ''); setFieldValue("fechaNacimiento", e ? dayjs(e).toDate() : '') }}
+              name="fechaNacimiento"
+              defaultValue={dayjs()}
+              minDate={dayjs("01/01/1900")}
+              maxDate={dayjs()}
+              sx={{ gridColumn: "span 1" }}
             />
             <TextField
-              fullWidth
-              variant="filled"
+              size="small"
+              variant="outlined"
               type="text"
-              label="Número de contacto"
+              label="Domicilio del cliente"
               onBlur={handleBlur}
-              value={contactoValue}
+              value={direccionValue}
               onChange={(e) => {
-                setContactoValue(e.target.value);
-                setFieldValue("contacto", e.target.value);
+                setDireccionValue(e.target.value);
+                setFieldValue("direccion", e.target.value);
               }}
-              name="contacto"
-              error={!!touched.contacto && !!errors.contacto}
-              helperText={touched.contacto && errors.contacto}
+              name="direccion"
+              error={!!touched.direccion && !!errors.direccion}
+              helperText={touched.direccion && errors.direccion}
+              sx={{ gridColumn: "span 3" }}
+            />
+            <TextField
+              size="small"
+              multiline
+              variant="outlined"
+              type="text"
+              label="Observarciones"
+              onBlur={handleBlur}
+              value={observacionValue}
+              onChange={(e) => {
+                setObservacionValue(e.target.value);
+                setFieldValue("observacion", e.target.value);
+              }}
+              name="observacion"
+              error={!!touched.observacion && !!errors.observacion}
+              helperText={touched.observacion && errors.observacion}
               sx={{ gridColumn: "span 4" }}
             />
-          </Box>
-          <Box display="flex" justifyContent="end" mt="20px" columnGap="6px">
-            <Button variant="text" onClick={resetForm}>
-              Limpiar todo
-            </Button>
-            <Button type="submit" color="secondary" variant="contained" startIcon={<SaveOutlinedIcon />}>
-              Crear
-            </Button>
+            <Box display="flex" justifyContent="start" mt="20px" columnGap="6px">
+              <Button type="submit" color="primary" variant="contained" startIcon={<SaveOutlinedIcon />}>
+                Crear cliente
+              </Button>
+              <Tooltip title="Limpiar todos los campos">
+                <IconButton color="primary" onClick={() => handleClear(resetForm)}>
+                  <CleaningServicesIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Box>
         </form>
       )}

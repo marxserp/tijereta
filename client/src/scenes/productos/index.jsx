@@ -1,17 +1,23 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, CircularProgress, useTheme } from "@mui/material";
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import { tokens } from "../../theme";
-import Header from "../../components/Header";
 import ProductoList from "./ProductoList";
-import AddProductoForm from "./AddProductoForm";
 import SingleProductoPane from "./SingleProductoPane";
 
 const Productos = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { status } = useSelector((state) => state.productos);
   const [productoID, setProductoID] = useState(0);
+
+  /* if (status === "loading") {
+    return <CircularProgress />;
+  }
+
+  if (status === "failed") { return <Typography color="error">Failed to fetch data</Typography>; } */
 
   return (
     <Box position="relative" display="flex" justifyContent="center" height="91vh" overflow="hidden">

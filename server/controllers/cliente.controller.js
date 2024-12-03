@@ -1,18 +1,19 @@
 import mongoose from "mongoose";
 import clienteModel from "../models/cliente.model.js";
-// import usuarioModel from "../models/usuario.model.js";
 
 export const createCliente = async (req, res) => {
+  const { nombre, apellido, fechaNacimiento, direccion, correo, contacto, observacion } = req.body;
   try {
-    const { nombre, apellido, correo, contacto, usuario } = req.body;
     const newCliente = new clienteModel({
       nombre,
       apellido,
+      fechaNacimiento,
+      direccion,
       correo,
       contacto,
-      usuario,
+      observacion,
+      usuario: req.user.id
     });
-    // TODO: Two factor verification (same user should not create same client twice)
     await newCliente.save();
     res.status(201).json(newCliente);
   } catch (error) {
@@ -24,7 +25,8 @@ export const createCliente = async (req, res) => {
 
 export const getAllClientes = async (req, res) => {
   try {
-    const clientes = await clienteModel.find();
+    const userId = req.user.id;
+    const clientes = await clienteModel.find({ usuario: userId });
     res.status(200).json(clientes);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -46,11 +48,18 @@ export const updateCliente = async (req, res) => {
   const { nombre, apellido, contacto, correo } = req.body;
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No hay un cliente con ID ${id}.`);
+    const cliente = await clienteModel.findById(id);
+    if (!cliente || cliente.usuario.toString() !== req.user.id) {
+      return res.status(403).send("Sin autorización para actualizar cliente");
+    }
     const updatedCliente = {
       nombre,
       apellido,
-      contacto,
+      fechaNacimiento,
+      direccion,
       correo,
+      contacto,
+      observacion,
       updatedAt: new Date(),
       _id: id,
     };
@@ -85,10 +94,12 @@ export const searchClientes = async (req, res) => {
       $or: [
         { nombre: { $regex: query, $options: "i" } },
         { apellido: { $regex: query, $options: "i" } },
-        { contacto: { $regex: query, $options: "i" } }
+        { contacto: { $regex: query, $options: "i" } },
+        { direccion: { $regex: query, $options: "i" } },
+        { observacion: { $regex: query, $options: "i" } }
       ]
     }).limit(Number(limit));
-    res.json(clientes);
+    res.status(200).json(clientes);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

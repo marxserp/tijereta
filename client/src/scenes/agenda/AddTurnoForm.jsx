@@ -7,8 +7,6 @@ import { searchCliente } from "../../state/clientes";
 import useDebouncedSearch from "./debouncer";
 import { debounce, isEqual } from 'lodash';
 
-import { Formik, useFormikContext } from "formik";
-import * as yup from "yup";
 import {
   Box,
   Button,
@@ -23,14 +21,17 @@ import {
   List,
   ListItem,
   Autocomplete,
+  Tooltip
 } from "@mui/material";
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import useMediaQuery from "@mui/material/useMediaQuery"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 
-import useMediaQuery from "@mui/material/useMediaQuery"
-import { DatePicker } from "@mui/x-date-pickers";
+import { Formik, useFormikContext } from "formik";
+import * as yup from "yup";
 import dayjs from "dayjs";
 
 
@@ -46,11 +47,16 @@ const initialValues = {
   fecha: dayjs(),
   id_cliente: "",
   id_producto: "",
-  detalle: "",
+  id_producto2: "",
+  id_producto3: "",
   sena: 0,
+  monto: 0,
+  promo: 0,
+  total: 0,
+  detalle: "",
   observacion: "",
   estado: 1,
-  extra: 1,
+  extra: "Activo",
 };
 
 const AddTurnoForm = ({ currentID, setCurrentID }) => {
@@ -69,8 +75,11 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
   const [selectedClienID, setSelectedClienID] = useState("");
   const [productos, setProductos] = useState([]);
   const [selectedProdID, setSelectedProdID] = useState("");
+  const [selectedProd2ID, setSelectedProd2ID] = useState("");
+  const [selectedProd3ID, setSelectedProd3ID] = useState("");
   const [sena, setSena] = useState(0);
-  const [extra, setExtra] = useState(1);
+  const [promo, setPromo] = useState(0);
+  const [extra, setExtra] = useState("");
 
   const searchClienFunc = async (query) => {
     if (!query) return [];
@@ -107,7 +116,7 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
     } finally {
       // Implementar estado de app en almacén
       console.log("finally");
-    } 
+    }
   };
 
   const handleDelete = async () => {
@@ -119,7 +128,10 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
     setSelectedDateValue(dayjs());
     setSelectedClienID(null);
     setSelectedProdID(null);
+    setSelectedProd2ID(null);
+    setSelectedProd3ID(null);
     setSena(null);
+    setPromo(null);
     setExtra(null);
     resetForm();
   };
@@ -133,43 +145,33 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
   */
 
   return (
-    <Formik
-      onSubmit={handleFormSubmit}
-      initialValues={initialValues}
-    >
-      {({
-        values,
-        errors,
-        touched,
-        handleChange,
-        handleSubmit,
-        resetForm,
-        setFieldValue,
-      }) => (
+    <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
+      {({ values, errors, touched, handleChange, handleSubmit, resetForm, setFieldValue, }) => (
         <form onSubmit={handleSubmit}>
           <Box display="flex" justifyContent="start" alignItems="center" p="0 0 20px 0" m="20px 10px 10px 10px">
             <IconButton onClick={() => navigate(-1)}>
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h2" fontWeight="bold" m="0 30px 2px 0">Detalles del turno</Typography>
+            <Typography variant="h2" fontWeight="bold" m="0 30px 2px 0">Nuevo turno</Typography>
           </Box>
+
           <Box
             display="grid"
             gap="30px" m="40px 20px 20px 20px" gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-            sx={{
-              "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-            }}
+            sx={{ "& > div": { gridColumn: isNonMobile ? undefined : "span 4" }, }}
           >
-            <DatePicker
+            <DateTimePicker
+              slotProps={{ textField: { size: 'small' } }}
               name="fecha"
               label="Elegí una fecha"
               value={selectedDateValue}
               onChange={(e) => { setSelectedDateValue(e ? dayjs(e).toDate() : ''); setFieldValue("fecha", e ? dayjs(e).toDate() : '') }}
               defaultValue={dayjs()}
               minDate={dayjs()}
-              sx={{ gridColumn: "span 2" }}
+              sx={{ gridColumn: "span 1" }}
             />
-            <FormControl fullWidth>
+
+            <FormControl size="small">
               <InputLabel id="extra">Estado del turno</InputLabel>
               <Select
                 id="extra"
@@ -183,15 +185,16 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
                 }}
                 sx={{ gridColumn: "span 1" }}
               >
-                <MenuItem value={1}>Activo</MenuItem>
-                <MenuItem value={2}>Pendiente</MenuItem>
-                <MenuItem value={3}>Pospuesto</MenuItem>
-                <MenuItem value={4}>Finalizado</MenuItem>
-                <MenuItem value={5}>Cancelado</MenuItem>
+                <MenuItem value={"Activo"}>Activo</MenuItem>
+                <MenuItem value={"Pendiente"}>Pendiente</MenuItem>
+                <MenuItem value={"Pospuesto"}>Pospuesto</MenuItem>
+                <MenuItem value={"Finalizado"}>Finalizado</MenuItem>
+                <MenuItem value={"Cancelado"}>Cancelado</MenuItem>
               </Select>
             </FormControl>
 
             <TextField
+              size="small"
               variant="outlined"
               label="Seña"
               onChange={
@@ -205,6 +208,31 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
               }
               value={sena}
               name="sena"
+              helperText="Sólo admite números"
+              InputProps={{
+                inputMode: "decimal", pattern: "[0-9]*",
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
+              sx={{ gridColumn: "span 1" }}
+            />
+
+            <TextField
+              size="small"
+              variant="outlined"
+              label="Promoción"
+              onChange={
+                (e) => {
+                  const value = e.target.value;
+                  if (value === "" || /^[0-9]*\.?[0-9]*$/.test(value)) {
+                    setPromo(value);
+                    setFieldValue("promo", value);
+                  }
+                }
+              }
+              value={promo}
+              name="promo"
               helperText="Sólo admite números"
               InputProps={{
                 inputMode: "decimal", pattern: "[0-9]*",
@@ -231,14 +259,14 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
               }}
               isOptionEqualToValue={(option, value) => option._id === value._id}
               renderInput={(params) => (
-                <TextField {...params} label="Buscá un cliente" variant="outlined" />
+                <TextField {...params} label="Elegí un cliente" size="small" variant="outlined" />
               )}
               renderOption={(props, option) => (
                 <Box {...props} key={option._id}>
                   {option.nombre}
                 </Box>
               )}
-              sx={{ gridColumn: "span 4" }}
+              sx={{ gridColumn: "span 2" }}
             />
 
             <Autocomplete
@@ -257,18 +285,70 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
               }}
               isOptionEqualToValue={(option, value) => option._id === value._id}
               renderInput={(params) => (
-                <TextField {...params} label="Elegí  un producto" variant="outlined" />
+                <TextField {...params} label="Elegí  un producto" size="small" variant="outlined" />
               )}
               renderOption={(props, option) => (
                 <Box {...props} key={option._id}>
                   {option.nombre}
                 </Box>
               )}
-              sx={{ gridColumn: "span 4" }}
+              sx={{ gridColumn: "span 2" }}
+            />
+
+            <Autocomplete
+              options={productos}
+              getOptionLabel={(option) => option.nombre || ""}
+              onInputChange={(event, value) => {
+                if (value) {
+                  debouncedSearchProdFunc(value, setProductos);
+                } else {
+                  setProductos([]);
+                }
+              }}
+              onChange={(event, value) => {
+                setSelectedProd2ID(value?._id || "");
+                setFieldValue("id_producto2", value?._id || "");
+              }}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+              renderInput={(params) => (
+                <TextField {...params} label="Opcional: agregá un producto adicional" size="small" variant="outlined" />
+              )}
+              renderOption={(props, option) => (
+                <Box {...props} key={option._id}>
+                  {option.nombre}
+                </Box>
+              )}
+              sx={{ gridColumn: "span 2" }}
+            />
+
+            <Autocomplete
+              options={productos}
+              getOptionLabel={(option) => option.nombre || ""}
+              onInputChange={(event, value) => {
+                if (value) {
+                  debouncedSearchProdFunc(value, setProductos);
+                } else {
+                  setProductos([]);
+                }
+              }}
+              onChange={(event, value) => {
+                setSelectedProd3ID(value?._id || "");
+                setFieldValue("id_producto3", value?._id || "");
+              }}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+              renderInput={(params) => (
+                <TextField {...params} label="Opcional: agregá otro producto adicional" size="small" variant="outlined" />
+              )}
+              renderOption={(props, option) => (
+                <Box {...props} key={option._id}>
+                  {option.nombre}
+                </Box>
+              )}
+              sx={{ gridColumn: "span 2" }}
             />
 
             <TextField
-              fullWidth
+              size="small"
               variant="outlined"
               type="text"
               label="Detalles"
@@ -278,11 +358,11 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
               name="detalle"
               error={!!touched.detalle && !!errors.detalle}
               helperText={touched.detalle && errors.detalle}
-              sx={{ gridColumn: "span 4" }}
+              sx={{ gridColumn: "span 2" }}
             />
 
             <TextField
-              fullWidth
+              size="small"
               variant="outlined"
               type="text"
               label="Observaciones"
@@ -292,14 +372,18 @@ const AddTurnoForm = ({ currentID, setCurrentID }) => {
               name="observacion"
               error={!!touched.observacion && !!errors.observacion}
               helperText={touched.observacion && errors.observacion}
-              sx={{ gridColumn: "span 4" }}
+              sx={{ gridColumn: "span 2" }}
             />
-            <Box display="flex" justifyContent="end" mt="20px">
-              <IconButton color="primary" onClick={() => handleClear(resetForm)}>
-                <CleaningServicesIcon />
-              </IconButton>
-              <Button variant="outlined" onClick={() => handleDelete()} startIcon={<DeleteOutlinedIcon />}>Eliminar</Button>
-              <Button type="submit" color="primary" variant="contained" startIcon={<SaveOutlinedIcon />}>Guardar</Button>
+
+            <Box display="flex" justifyContent="start" mt="20px" columnGap="6px">
+              <Button type="submit" color="primary" variant="contained" startIcon={<SaveOutlinedIcon />}>
+                Crear producto
+              </Button>
+              <Tooltip title="Limpiar todos los campos">
+                <IconButton color="primary" onClick={() => handleClear(resetForm)}>
+                  <CleaningServicesIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
           </Box>
         </form>

@@ -45,7 +45,7 @@ const TurnoAgenda = ({ setCurrentID }) => {
   };
 
   const handleEventClick = (e) => {
-    navigate(`/agenda/${e.event._def.publicId}`);
+    setCurrentID(e.event._def.publicId);
   };
 
   useEffect(() => {
@@ -88,6 +88,7 @@ const TurnoAgenda = ({ setCurrentID }) => {
             selectable={true}
             selectMirror={true}
             dayMaxEvents={true}
+            locale="es" 
             select={handleDateClick}
             eventClick={(e) => handleEventClick(e)}
             eventsSet={(events) => { if (events !== currentEvents) { setCurrentEvents(events) }; }}

@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   Box,
-  Button,
-  InputAdornment,
-  IconButton,
   TextField,
+  FormControl,
+  Button,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
   useMediaQuery,
-  Typography,
-  useTheme,
+  InputLabel,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -19,8 +20,8 @@ import * as yup from "yup";
 import { logIn } from "./../../state/auth";
 
 const loginSchema = yup.object().shape({
-  correo: yup.string().email("Formato de correo no válido.").required("Debés indicar una dirección de correo."),
-  contrasena: yup.string().required("La contraseña es obligatoria"),
+  correo: yup.string().email("Formato de correo no válido").required("Debés indicar una dirección de correo"),
+  contrasena: yup.string().min(8, "La contraseña debe tener por lo menos 8 caracteres").required("La contraseña es obligatoria"),
 });
 
 const initialValuesLogin = {
@@ -37,14 +38,14 @@ const LoginUsuarioForm = () => {
   const [contrasenaValue, setContrasenaValue] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
+  const handleShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (e) => { e.preventDefault(); };
 
   const handleFormSubmit = async (values) => {
+    const formData = new URLSearchParams(values)
+
     try {
-      await dispatch(logIn(values));
+      await dispatch(logIn(formData));
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -54,30 +55,17 @@ const LoginUsuarioForm = () => {
   };
 
   return (
-    <Formik
-      onSubmit={handleFormSubmit}
-      initialValues={initialValuesLogin}
-      validationSchema={loginSchema}
-    >
-      {({
-        values,
-        errors,
-        touched,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        setFieldValue,
-      }) => (
+    <Formik onSubmit={handleFormSubmit} initialValues={initialValuesLogin} validationSchema={loginSchema}>
+      {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue, }) => (
         <form onSubmit={handleSubmit}>
           <Box
             display="grid"
-            gap="20px"
-            gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-            sx={{
-              "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-            }}
+            gap="20px" mt="40px" gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+            sx={{ "& > div": { gridColumn: isNonMobile ? undefined : "span 4"}, }}
           >
             <TextField
+              fullWidth
+              size="small"
               label="Correo"
               onBlur={handleBlur}
               value={correoValue}
@@ -90,40 +78,41 @@ const LoginUsuarioForm = () => {
               helperText={touched.correo && errors.correo}
               sx={{ gridColumn: "span 4" }}
             />
-            <TextField
-              label="Contraseña"
-              type={showPassword ? "text" : "password"}
-              onBlur={handleBlur}
-              value={contrasenaValue}
-              onChange={(e) => {
-                setContrasenaValue(e.target.value);
-                setFieldValue("contrasena", e.target.value);
-              }}
-              name="contrasena"
-              error={Boolean(touched.contrasena) && Boolean(errors.contrasena)}
-              helperText={touched.contrasena && errors.contrasena}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              sx={{ gridColumn: "span 4" }}
-            />
+            <FormControl size="small" fullWidth sx={{ gridColumn: "span 4" }}>
+              <InputLabel>Contraseña</InputLabel>
+              <OutlinedInput
+                id="contrasena"
+                label="Contraseña"
+                type={showPassword ? "text" : "password"}
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.contrasena}
+                name="contrasena"
+                error={Boolean(touched.contrasena) && Boolean(errors.contrasena)}
+                helperText={touched.contrasena && errors.contrasena}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
           </Box>
           <Box>
             <Button
               type="submit"
               fullWidth
               variant="contained"
+              size="large"
               sx={{
-                m: "2rem 0",
-                p: "1rem"
+                m: "1rem 0",
               }}
             >
               Iniciar sesión

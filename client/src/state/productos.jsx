@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import * as api from "../api/index.js";
+import * as api from "../services/api.js";
 
 const initialState = {
-  productos: {},
-  status: "idle",
+  productos: [],
+  status: "idle", // loading | success | failed
   error: null,
 };
 
@@ -58,17 +58,25 @@ const productosSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchAllProductos.fulfilled, (state, action) => {
-      return {
-        ...state,
-        productos: action.payload,
-        status: "succeeded",
-        error: null,
-      };
-    });
-    builder.addCase(createProducto.fulfilled, (state, action) => {
-      state.productos = state.productos.concat(action.payload);
-    })
+    builder
+      .addCase(fetchAllProductos.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAllProductos.fulfilled, (state, action) => {
+        return {
+          ...state,
+          productos: action.payload,
+          status: "success",
+          error: null,
+        };
+      })
+      .addCase(fetchAllProductos.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(createProducto.fulfilled, (state, action) => {
+        state.productos = state.productos.concat(action.payload);
+      })
       .addCase(updateProducto.fulfilled, (state, action) => {
         const productos = state.productos.filter((producto) => producto._id !== action.payload._id);
         console.log("loggin action.payload from updateProducto.fulfilled", action.payload);

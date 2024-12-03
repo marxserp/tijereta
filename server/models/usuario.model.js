@@ -10,11 +10,13 @@ const usuarioSchema = mongoose.Schema(
       trim: true,
       unique: true,
       required: true,
-      match: [/\S+@\S+\.\S+/, "Correo no valido"],
+      match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Correo no válido"],
       index: true,
-      max: 75,
+      max: [75, "Correo excede límite de caracteres"],
     },
-    contrasena: { type: String, required: true, min: 8 },
+    contrasena: { type: String, required: true, min: [8, "Contraseña no cumple mínimo de 8 caracteres"] },
+    codigo: { type: String, required: true, min: [6, "Código no cumple mínimo de 6 caracteres"] },
+    estado: { type: Boolean, required: true, default: false }
   },
   { timestamps: true }
 );

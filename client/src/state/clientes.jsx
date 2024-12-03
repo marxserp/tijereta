@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import * as api from "../api/index.js";
+import * as api from "../services/api.js";
 
 const initialState = {
-  clientes: {},
-  status: "idle",
+  clientes: [],
+  status: "idle", // loading | success | failed
   error: null,
 };
 
@@ -61,15 +61,22 @@ const clientesSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchAllClientes.fulfilled, (state, action) => {
-      return {
-        ...state,
-        clientes: action.payload,
-        status: "succeeded",
-        error: null,
-      };
-    });
     builder
+      .addCase(fetchAllClientes.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAllClientes.fulfilled, (state, action) => {
+        return {
+          ...state,
+          clientes: action.payload,
+          status: "success",
+          error: null,
+        };
+      })
+      .addCase(fetchAllClientes.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
       .addCase(createCliente.fulfilled, (state, action) => {
         // Usás concat en vez de push porque retorna copia del arreglo original, y respetás inmutabilidad
         state.clientes = state.clientes.concat(action.payload);

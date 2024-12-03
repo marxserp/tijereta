@@ -1,14 +1,13 @@
 import axios from "axios";
 
-const baseURL = "https://tijereta-server.onrender.com";
+// const API = axios.create({ baseURL: process.env.BASE_URL });
 
 const API = axios.create({ baseURL: "http://localhost:8080" });
 
 // Verifiy localStorage !!!
 API.interceptors.request.use((req) => {
   if (localStorage.getItem("profile")) {
-    req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem("profile")).token
-      }`;
+    req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem("profile")).token}`;
   }
   return req;
 });
@@ -37,6 +36,10 @@ export const fetchSingleTurno = (id) => API.get(`/turnos/${id}`);
 export const updateTurno = (id, updatedTurno) =>
   API.patch(`/turnos/${id}`, updatedTurno);
 export const deleteTurno = (id) => API.delete(`/turnos/${id}`);
+export const getTopBuyers = () => API.get("/turnos/top");
+export const getTurnosByExtra = (query) => API.get(`/turnos/filterget?query=${query}`);
 
 export const register = (formData) => API.post("/auth/register", formData);
 export const login = (formData) => API.post("/auth/login", formData);
+export const verify = (formData) => API.post("/auth/verification", formData);
+export const adm = (formData) => API.post("/auth/novaUAuth", formData);

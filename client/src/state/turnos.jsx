@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import * as api from "../api/index.js";
+import * as api from "../services/api.js";
 
 const initialState = {
   turnos: [],
-  status: "idle",
+  status: "idle", // loading | success | failed
   error: null,
 };
 
@@ -53,22 +53,30 @@ const turnosSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchAllTurnos.fulfilled, (state, action) => {
-      return {
-        ...state,
-        turnos: action.payload,
-        status: "succeeded",
-        error: null,
-      };
-    });
-    builder.addCase(createTurno.fulfilled, (state, action) => {
-      state.turnos = state.turnos.concat(action.payload);
-    }).addCase(updateTurno.fulfilled, (state, action) => {
-      const turnos = state.turnos.filter((turno) => turno._id !== action.payload._id);
-      state.turnos = [...turnos, action.payload];
-    }).addCase(deleteTurno.fulfilled, (state, action) => {
-      state.turnos = state.turnos.filter((turnos) => turnos._id !== action.payload);
-    });
+    builder
+      .addCase(fetchAllTurnos.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAllTurnos.fulfilled, (state, action) => {
+        return {
+          ...state,
+          turnos: action.payload,
+          status: "success",
+          error: null,
+        };
+      })
+      .addCase(fetchAllTurnos.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(createTurno.fulfilled, (state, action) => {
+        state.turnos = state.turnos.concat(action.payload);
+      }).addCase(updateTurno.fulfilled, (state, action) => {
+        const turnos = state.turnos.filter((turno) => turno._id !== action.payload._id);
+        state.turnos = [...turnos, action.payload];
+      }).addCase(deleteTurno.fulfilled, (state, action) => {
+        state.turnos = state.turnos.filter((turnos) => turnos._id !== action.payload);
+      });
   },
 });
 

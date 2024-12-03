@@ -7,6 +7,8 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import Layout from "./components/Layout";
 import Login from "./scenes/login";
+import VerificateUsuarioForm from "./scenes/login/VerificateUsuarioForm";
+import AuthorizationForm from "./scenes/login/AuthorizationForm";
 
 import Agenda from "./scenes/agenda";
 import SingleTurnoPage from "./scenes/agenda/SingleTurnoPage";
@@ -37,7 +39,7 @@ function App() {
     dispatch(fetchAllClientes());
     dispatch(fetchAllProductos());
     dispatch(fetchAllTurnos());
-  }, []);
+  }, [dispatch, isAuth]);
 
   function returnElementContent(isAuth, element) {
     if (isAuth) return element
@@ -50,6 +52,8 @@ function App() {
         <CssBaseline />
         <Routes>
           <Route path="/auth" element={<Login />} />
+          <Route path="/autenticar" element={isAuth ? <Navigate to="/auth" /> : <VerificateUsuarioForm />} />
+          <Route path="/adm/auth" element={<AuthorizationForm />} />
 
           <Route path="/" element={isAuth ? <Layout /> : <Navigate to="/auth" />}>
             <Route index element={<Agenda />} />

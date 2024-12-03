@@ -1,20 +1,21 @@
 import jwt from "jsonwebtoken";
 
-export const verifyToken = async (req, res, next) => {
+export const authenticateUser = async (req, res, next) => {
   try {
-    let token = req.header("Authorization");
-    if (!token) {
+    // Espera "Bearer <token>"";
+    const authHeader = req.header("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
       return res.status(403).send("Acceso denegado");
     }
+    const token = authHeader.split(" ")[1];
 
-    // Token should start with "Bearer"
-    if (token.startsWith("Bearer ")) {
-      token = token.slice(7, token.lenght).trimLeft();
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = { id: decoded.id };
+      next();
+    } catch (error) {
+      res.status(403).json({ message: "Invalid token" });
     }
-
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verfied;
-    next();
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

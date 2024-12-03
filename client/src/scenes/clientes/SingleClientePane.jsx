@@ -41,7 +41,7 @@ const SingleClientePane = ({ currentID }) => {
                 <Box p="10px 10px 10px 10px">
                     <Link to={`/clientes/${cliente._id}`}>
                         <Button size="small" variant="text" startIcon={<InfoOutlinedIcon />}>
-                            Detalle
+                            Detalles
                         </Button>
                     </Link>
                     <Link to={`/clientes/editar/${cliente._id}`}>

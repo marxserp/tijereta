@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import * as dotenv from "dotenv";
-import connectDB from "./mongodb/connect.js";
+import connectDB from "./middleware/connect.js";
 // Rutas
 import authRouter from "./routes/auth.routes.js";
 import turnoRouter from "./routes/turno.routes.js";

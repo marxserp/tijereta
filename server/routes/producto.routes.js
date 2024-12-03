@@ -1,5 +1,4 @@
 import express from "express";
-
 import {
   createProducto,
   getAllProductos,
@@ -8,14 +7,15 @@ import {
   deleteProducto,
   searchProducto,
 } from "../controllers/producto.controller.js";
+import { authenticateUser } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.route("/search").get(searchProducto);
-router.route("/:id").patch(updateProducto);
-router.route("/:id").delete(deleteProducto);
-router.route("/:id").get(getSingleProducto);
-router.route("/").post(createProducto);
-router.route("/").get(getAllProductos);
+router.route("/search").get(authenticateUser, searchProducto);
+router.route("/:id").patch(authenticateUser, updateProducto);
+router.route("/:id").delete(authenticateUser, deleteProducto);
+router.route("/:id").get(authenticateUser, getSingleProducto);
+router.route("/").post(authenticateUser, createProducto);
+router.route("/").get(authenticateUser, getAllProductos);
 
 export default router;
