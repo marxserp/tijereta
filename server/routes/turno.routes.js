@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.route("/filterget").get(authenticateUser, getTurnosByExtra);
 router.route("/:id").patch(authenticateUser, updateTurno);
-router.route("/:id").get(authenticateUser, getSingleTurno);
+router.route("/turno/:id").get(authenticateUser, getSingleTurno);
 router.route("/topbuyer").get(authenticateUser, getTopBuyers);
 router.route("/topservice").get(authenticateUser, getTopServices);
 router.route("/:id").delete(authenticateUser, deleteTurno);

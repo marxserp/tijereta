@@ -1,5 +1,4 @@
 import * as api from "./api";
-
 export const getTopBuyers = async () => {
   try {
     const { data } = await api.getTopBuyers();
@@ -8,7 +7,14 @@ export const getTopBuyers = async () => {
     console.error(`Error al obtener top de clientes, ${error}`);
   }
 };
-
+export const getTopServices = async () => {
+  try {
+    const { data } = await api.getTopServices();
+    return data;
+  } catch (error) {
+    console.error(`Error al obtener top de clientes, ${error}`);
+  }
+};
 export const getTurnosByExtra = async (query) => {
   try {
     if (!query) {

@@ -104,11 +104,15 @@ export const login = async (req, res) => {
 };
 
 export const getSingleUsuario = async (req, res) => {
-  const userId = req.user.id;
+  const { id } = req.params;
   try {
-    const usuario = await usuarioModel.findById(userId);
+    if (req.user.id !== id) {
+      return res.status(403).json({ error: "No autorizado" });
+    }
+    const usuario = await usuarioModel.findById(id);
     res.status(200).json(usuario);
   } catch (error) {
+    console.log(id);
     res.status(500).json({ error: error.message });
   }
 };

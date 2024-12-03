@@ -1,7 +1,6 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { Typography, Box, Button, Card, CardContent, CircularProgress, useTheme } from "@mui/material";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import BalanceIcon from '@mui/icons-material/Balance';
@@ -12,21 +11,22 @@ import ChecklistIcon from '@mui/icons-material/Checklist';
 import { tokens } from "../../theme";
 
 import UsuarioCard from "./UsuarioCard";
+import StatsWall from "./StatsWall";
 import { fetchSingleUsuario } from "../../services/auth"
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
   const [usuario, setUsuario] = useState(null);
-  const userId = useSelector((state) => state.auth.usuario._id);
+  const { _id } = useSelector((state) => state.auth.usuario);
 
   useEffect(() => {
     const getUsuarioData = async () => {
-      const data = await fetchSingleUsuario(userId);
+      const data = await fetchSingleUsuario(_id);
       setUsuario(data);
     };
     getUsuarioData();
-  }, [userId]);
+  }, [_id]);
 
   return (
     <Box position="relative" display="flex" justifyContent="center" height="92vh" overflow="hidden">
@@ -34,8 +34,10 @@ const Dashboard = () => {
         <Box display="flex" justifyContent="start" alignItems="center" p="0 0 20px 0">
           <Typography variant="h2" fontWeight="bold" m="0 30px 2px 0">Inicio</Typography>
         </Box>
-
-        {usuario ? <UsuarioCard usuario={usuario} /> : <p>Loading...</p>}
+        <Box>
+          <UsuarioCard usuario={usuario} />
+          <StatsWall />
+        </Box>
       </Box>
     </Box>
   );

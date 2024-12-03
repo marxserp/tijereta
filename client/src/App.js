@@ -6,6 +6,7 @@ import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import Layout from "./components/Layout";
+import Dashboard from "./scenes/dashboard";
 import Login from "./scenes/login";
 import VerificateUsuarioForm from "./scenes/login/VerificateUsuarioForm";
 import AuthorizationForm from "./scenes/login/AuthorizationForm";
@@ -56,7 +57,7 @@ function App() {
           <Route path="/adm/auth" element={<AuthorizationForm />} />
 
           <Route path="/" element={isAuth ? <Layout /> : <Navigate to="/auth" />}>
-            <Route index element={<Agenda />} />
+            <Route index element={<Dashboard />} />
             <Route path="agenda">
               <Route index element={<Agenda />} />
               <Route path="nuevo" element={<AddTurnoForm />} />

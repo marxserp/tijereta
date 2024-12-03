@@ -13,8 +13,8 @@ const router = express.Router();
 
 router.route("/search").get(authenticateUser, searchClientes);
 router.route("/:id").patch(authenticateUser, updateCliente);
-router.route("/:id").get(authenticateUser, getSingleCliente);
 router.route("/:id").delete(authenticateUser, deleteCliente);
+router.route("/cliente/:id").get(authenticateUser, getSingleCliente);
 router.route("/").post(authenticateUser, createCliente);
 router.route("/").get(authenticateUser, getAllClientes);
 

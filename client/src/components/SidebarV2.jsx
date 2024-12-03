@@ -4,6 +4,7 @@ import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, Box, Ty
 import { useTheme } from "@mui/material/styles";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import CalendarTodayRoundedIcon from "@mui/icons-material/CalendarTodayRounded";
 import ContactsRoundedIcon from "@mui/icons-material/ContactsRounded";
 import LocalMallRoundedIcon from "@mui/icons-material/LocalMallRounded";
@@ -85,6 +86,13 @@ const Sidebar = () => {
         </Box>
 
         <List>
+          <SidebarItem
+            title="Inicio"
+            to="/"
+            icon={<HomeRoundedIcon />}
+            selected={selected}
+            setSelected={setSelected}
+          />
           <SidebarItem
             title="Agenda"
             to="/agenda"
