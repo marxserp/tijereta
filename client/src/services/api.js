@@ -1,8 +1,7 @@
 import axios from "axios";
 
-// const API = axios.create({ baseURL: process.env.BASE_URL });
-
-const API = axios.create({ baseURL: "http://localhost:8080" });
+const API = axios.create({ baseURL: process.env.BASE_URL });
+//const API = axios.create({ baseURL: "http://localhost:8080" });
 
 // Verifiy localStorage !!!
 API.interceptors.request.use((req) => {
