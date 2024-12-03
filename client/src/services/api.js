@@ -6,11 +6,14 @@ const API = axios.create({ baseURL: "http://localhost:8080" });
 
 // Verifiy localStorage !!!
 API.interceptors.request.use((req) => {
-  if (localStorage.getItem("profile")) {
-    req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem("profile")).token}`;
+  const profile = localStorage.getItem("profile");
+  if (profile) {
+    req.headers.Authorization = `Bearer ${JSON.parse(profile).token}`;
   }
   return req;
 });
+
+API.defaults.timeout = 10000;
 
 export const createCliente = (newCliente) => API.post("/clientes", newCliente);
 export const fetchAllClientes = () => API.get("/clientes");

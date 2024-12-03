@@ -14,7 +14,10 @@ dotenv.config();
 const app = express(); // Initializing app
 app.use(bodyParser.json({ limit: "30mb", extended: "true" })); // Límite para los archivos enviados desde el front
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: "true" }));
-app.use(cors()); // Añadido de middleware
+app.use(cors({
+  origin: "https://tijereta.onrender.com",
+  credentials: true,
+}));
 
 app.get("/", (req, res) => {
   res.send({ message: "Server up and running" });
